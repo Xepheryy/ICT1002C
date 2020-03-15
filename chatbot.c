@@ -52,7 +52,7 @@
  */
 const char *chatbot_botname() {
 
-	return "Chatbot";
+	return "Harwinder";
 
 }
 
@@ -154,12 +154,12 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_load(const char *intent) {
-
-	/* to be implemented */
-
-	return 0;
-
+    if (strcmp(intent, "load") == 0) {
+        return 1;
+    }
+    return 0;
 }
+
 
 
 /*
@@ -308,8 +308,38 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_smalltalk(const char *intent) {
 
-	/* to be implemented */
+    //Initialising question
+  char *qn = (char *) malloc(sizeof(intent));   
+  strcpy (qn, intent);
+  char fileline[MAX_INPUT];
+  char delim[]= ":";
+/*Change the intent to lower case for better formatting */
+  for (size_t i = 0; i < strlen(qn); i++) {
+        qn[i] = tolower(qn[i]);
+    }
 
+/* Load the small talk file */
+ FILE *fileptr;
+  char filename[MAX_INPUT] = "Small_talk_qns.txt";
+  char filecontents;
+/* Open the file and append and return error if the file is unable to open*/ 
+ fileptr = fopen(filename, "r");
+    if (fileptr == NULL) {
+        printf("Unable to open %s\n", filename);
+        return 0;
+    }
+    else{
+          //printf("The contents of %s file are:\n", filename);
+          filecontents = fgetc(fileptr);
+          while (filecontents != EOF) 
+           {
+        //printf ("%c", filecontents); 
+        filecontents = fgetc(fileptr); 
+    } 
+    }
+
+
+   fclose(fileptr);
 	return 0;
 
 }
