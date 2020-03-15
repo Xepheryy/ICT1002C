@@ -1,0 +1,5 @@
+hello:hello
+hi:hi
+are you a chatbot:what do you think
+bye:bye
+can you be my friend:sure
