@@ -192,7 +192,9 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_question(const char *intent) {
 
-	/* to be implemented */
+	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
+		return 1;
+	}
 
 	return 0;
 
@@ -269,10 +271,15 @@ int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_save(const char *intent) {
+if (compare_token(intent,"save")){       // Check if Intent is to SAVE
+        return 0;                           // Return 0 if Intent is to SAVE
+    }
+    else {
+        return 1;                      
+    }
+	
 
-	/* to be implemented */
-
-	return 0;
+	
 
 }
 
@@ -308,38 +315,24 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_smalltalk(const char *intent) {
 
-    //Initialising question
-  char *qn = (char *) malloc(sizeof(intent));   
-  strcpy (qn, intent);
-  char fileline[MAX_INPUT];
-  char delim[]= ":";
-/*Change the intent to lower case for better formatting */
-  for (size_t i = 0; i < strlen(qn); i++) {
-        qn[i] = tolower(qn[i]);
-    }
+  /* initialise own question */
+char *smalltalk[] = {"Hi","Sup", "Hello","Yo","Greetings"};
+char smalltalkqns[MAX_INPUT];
 
-/* Load the small talk file */
- FILE *fileptr;
-  char filename[MAX_INPUT] = "Small_talk_qns.txt";
-  char filecontents;
-/* Open the file and append and return error if the file is unable to open*/ 
- fileptr = fopen(filename, "r");
-    if (fileptr == NULL) {
-        printf("Unable to open %s\n", filename);
-        return 0;
-    }
-    else{
-          //printf("The contents of %s file are:\n", filename);
-          filecontents = fgetc(fileptr);
-          while (filecontents != EOF) 
-           {
-        //printf ("%c", filecontents); 
-        filecontents = fgetc(fileptr); 
-    } 
-    }
+//FILE *fptr;
+//char file[MAX_INPUT] = "Small_talk_qns.txt";
+//fptr = fopen(file, "r"); 
+
+	size_t smalltalkLength = sizeof(smalltalk) / sizeof(smalltalk[0]);
+	for(int i = 0; i< smalltalkLength; i++)
+	{
+		if(compare_token(intent,smalltalk[i]) == 0)
+		{
+			return 1;
+		}
+	}
 
 
-   fclose(fileptr);
 	return 0;
 
 }
@@ -357,7 +350,10 @@ int chatbot_is_smalltalk(const char *intent) {
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
-	/* to be implemented */
+	char *smalltalkOutput[] = {"Hi, Welcome to Chatbot programmed by Shaun, Eugene, Clement, Siong yong and Zames", "What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!"};
+	size_t smalltalkLength = sizeof(smalltalkOutput) / sizeof(smalltalkOutput[0]);
+	int randomOutput = rand() % smalltalkLength;
+	snprintf(response, n, smalltalkOutput[randomOutput]);
 
 	return 0;
 
