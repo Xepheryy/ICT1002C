@@ -350,30 +350,20 @@ char smalltalkqns[MAX_INPUT];
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
-	
-  //Defining the small talk answers
+//Defining the small talk answers
 	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"This Chatbot is programmed by Shaun, Eugene, Clement, Siong yong and Zames", "What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!"};
 	size_t smalltalkLength = sizeof(smalltalkOutput) / sizeof(smalltalkOutput[0]);
 
-if (compare_token("bye",inv[0])==0 || compare_token("goodbye",inv[0])==0){
-            snprintf(response,n,"Bye");
+//Checking to see the user input any of the end phrases
+if (compare_token("bye",inv[0])==0 || compare_token("goodbye",inv[0])==0 || compare_token("quit",inv[0])==0){
+            snprintf(response,n,"bye!");
             return 1;
 }
+//If not any of the end phrases, return the normal small talk output
 else{
   int randomOutput = rand() % smalltalkLength;
 	snprintf(response, n, smalltalkOutput[randomOutput]);
   return 0;
 }
-
-
-
-  //Randomising the output for the chatbot smalltalk
-
-//Defining the end phrases for small talk
-//char *endphrases[]={"goodbye", "bye","quit"};
-//size_t endphraseslength = sizeof(endphrases)/sizeof(endphrases[0]);
-
- 
-	return 0;
 
 }
