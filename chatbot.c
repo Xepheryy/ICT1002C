@@ -317,16 +317,15 @@ int chatbot_is_smalltalk(const char *intent) {
 
   /* initialise own question */
 char *smalltalk[] = {"Hi","Sup", "Hello","Yo","Greetings"};
-char smalltalkqns[MAX_INPUT];
+//Defining small talk items, including end phrases
+char *smalltalkitems[] = {"Hi","Sup", "Hello","Yo","Greetings","goodday","talk","bye","goodbye", "quit","it's","it","its"};
 
-//FILE *fptr;
-//char file[MAX_INPUT] = "Small_talk_qns.txt";
-//fptr = fopen(file, "r"); 
+	size_t smalltalkLength = sizeof(smalltalkitems) / sizeof(smalltalkitems[0]);
 
-	size_t smalltalkLength = sizeof(smalltalk) / sizeof(smalltalk[0]);
+//Checking the intent whether is it smalltalk
 	for(int i = 0; i< smalltalkLength; i++)
 	{
-		if(compare_token(intent,smalltalk[i]) == 0)
+		if(compare_token(intent,smalltalkitems[i]) == 0)
 		{
 			return 1;
 		}
@@ -351,7 +350,7 @@ char smalltalkqns[MAX_INPUT];
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
 //Defining the small talk answers
-	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"This Chatbot is programmed by Shaun, Eugene, Clement, Siong yong and Zames", "What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!"};
+	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"This Chatbot is programmed by Shaun, Eugene, Clement, Siong yong and Zames", "What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!","That's great"};
 	size_t smalltalkLength = sizeof(smalltalkOutput) / sizeof(smalltalkOutput[0]);
 
 //Checking to see the user input any of the end phrases
@@ -359,6 +358,12 @@ if (compare_token("bye",inv[0])==0 || compare_token("goodbye",inv[0])==0 || comp
             snprintf(response,n,"bye!");
             return 1;
 }
+//Agreeing with the user
+else if(compare_token("it",inv[0])==0 ||compare_token("it's",inv[0])==0 ||compare_token("its",inv[0])==0 ){
+          snprintf(response,n,"Indeed it is.");
+          return 0;
+}
+
 //If not any of the end phrases, return the normal small talk output
 else{
   int randomOutput = rand() % smalltalkLength;
