@@ -52,7 +52,7 @@
  */
 const char *chatbot_botname() {
 
-	return "Harwinder";
+	return "Chatbot";
 
 }
 
@@ -154,12 +154,12 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_load(const char *intent) {
-    if (strcmp(intent, "load") == 0) {
-        return 1;
-    }
-    return 0;
-}
 
+	/* to be implemented */
+
+	return 0;
+
+}
 
 
 /*
@@ -174,6 +174,24 @@ int chatbot_is_load(const char *intent) {
 int chatbot_do_load(int inc, char *inv[], char *response, int n) {
 
 	/* to be implemented */
+	if(inv[1]== NULL){
+		strcpy(response,"No file input");
+	}
+	else{
+		FILE * f;
+		f = fopen(inv[1],"r");
+		if(f==NULL){
+			strcpy(response,"error");
+		}
+		else {
+			int count = 0;
+			count = knowledge_read(f);
+			// snprintf params (buffer , buffer size,format similar to printf, filename <- i think so)
+			snprintf(response, n," %d entities in %s", count, inv[1]);
+			fclose(f);
+
+		}
+	}
 
 	return 0;
 
@@ -192,9 +210,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_question(const char *intent) {
 
-	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
-		return 1;
-	}
+	/* to be implemented */
 
 	return 0;
 
@@ -271,15 +287,10 @@ int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_save(const char *intent) {
-if (compare_token(intent,"save")){       // Check if Intent is to SAVE
-        return 0;                           // Return 0 if Intent is to SAVE
-    }
-    else {
-        return 1;                      
-    }
-	
 
-	
+	/* to be implemented */
+
+	return 0;
 
 }
 
@@ -294,11 +305,30 @@ if (compare_token(intent,"save")){       // Check if Intent is to SAVE
  *   0 (the chatbot always continues chatting after saving knowledge)
  */
 int chatbot_do_save(int inc, char *inv[], char *response, int n) {
+	
+    if (inv[1] == NULL){
+        strcpy(response,"No file inputted!");                   // Error Response for No Input for File
+    }
+    else{
 
-	/* to be implemented */
 
+    	int num;
+   		FILE *fptr;
+   		fptr = fopen(inv[1], "w");
+    	if(fptr == NULL){  
+			strcpy(response,"Error creating file");             
+		}
+		else {
+			knowledge_write(fptr);
+    		snprintf(response, n, "My knowledge has been saved to %s.", inv[1]);
+		}
+
+		fclose(fptr);
+
+    }
+	
 	return 0;
-
+	 
 }
 
 
@@ -315,21 +345,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_smalltalk(const char *intent) {
 
-//Defining small talk items, including end phrases
-char *smalltalkitems[] = {"Hi","Sup", "Hello","Yo","Greetings","goodday","talk","bye","goodbye", "quit","it's","it","its"};
-
-//Calculating the total size of the length of the defined array
-	size_t smalltalkLength = sizeof(smalltalkitems) / sizeof(smalltalkitems[0]);
-
-//Using a for loop to loop throught the small talk array to check wehther intent matches any small talk phrases.
-	for(int i = 0; i< smalltalkLength; i++)
-	{
-		if(compare_token(intent,smalltalkitems[i]) == 0)
-		{
-			return 1;
-		}
-	}
-
+	/* to be implemented */
 
 	return 0;
 
@@ -343,31 +359,13 @@ char *smalltalkitems[] = {"Hi","Sup", "Hello","Yo","Greetings","goodday","talk",
  * function is used.
  *
  * Returns:
- *   0, if the chatbot should continue chatting, taking the to 
+ *   0, if the chatbot should continue chatting
  *   1, if the chatbot should stop chatting (e.g. the smalltalk was "goodbye" etc.)
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
-	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!","That's great"};
+	/* to be implemented */
 
-  //Calculating the total length of the defined small talk output array
-	size_t smalltalkLength = sizeof(smalltalkOutput) / sizeof(smalltalkOutput[0]);
+	return 0;
 
-//Checking to see the user input any of the end phrases
-if (compare_token("bye",inv[0])==0 || compare_token("goodbye",inv[0])==0 || compare_token("quit",inv[0])==0){
-            snprintf(response,n,"bye!");
-            return 1;
-}
-//Agreeing with the user
-else if(compare_token("it",inv[0])==0 ||compare_token("it's",inv[0])==0 ||compare_token("its",inv[0])==0 ){
-          snprintf(response,n,"Indeed it is.");
-          return 0;
-}
-
-//If not any of the end phrases, return the normal small talk output
-else{
-  int randomOutput = rand() % smalltalkLength;
-	snprintf(response, n, smalltalkOutput[randomOutput]);
-  return 0;
-}
 }
