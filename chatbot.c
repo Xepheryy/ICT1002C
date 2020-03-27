@@ -348,7 +348,7 @@ char *smalltalkitems[] = {"Hi","Sup", "Hello","Yo","Greetings","goodday","talk",
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
-	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"This Chatbot is programmed by Shaun, Eugene, Clement, Siong yong and Zames", "What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!","That's great"};
+	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!","That's great"};
 
   //Calculating the total length of the defined small talk output array
 	size_t smalltalkLength = sizeof(smalltalkOutput) / sizeof(smalltalkOutput[0]);
