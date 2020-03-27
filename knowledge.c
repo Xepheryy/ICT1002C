@@ -33,7 +33,51 @@
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
 
+	FILE *File = NULL;
+
 	/* to be implemented */
+	// Check if intent is valid
+	if(chatbot_is_question(intent) !=1){
+		return KB_INVALID;
+	}
+	
+	// if file can't be opened
+	if((File = fopen("ICT1002_Group_Project_Assignment_AY19_T2_Sample.ini" , "r")) == NULL){
+		return KB_NOTFOUND;
+	}
+
+	// initialise response buffer
+	ulong ulBufferLen = 1;			// Initial Buffer Length
+	response = NULL;
+
+	if(strcmp(intent, "who") == 0){
+		// iterate through ini file for 'who' answers
+		char *question = "";
+		if(strcmp(entity, question)){
+			// copy associated response to response buffer;
+			response = (char*)malloc(ulBufferLen*sizeof(char));
+			
+			return KB_OK;
+		}
+	}
+	
+	if(strcmp(intent, "what") == 0){
+		// iterate through ini file for 'what' answers
+		char *question = "";
+		if(strcmp(entity, question)){
+			// copy associated response to response buffer;
+			return KB_OK;
+		}
+	}
+	
+	if(strcmp(intent, "where") == 0){
+		// iterate through ini file for 'where' answers
+		char *question = "";
+		if(strcmp(entity, question)){
+			// copy associated response to response buffer;
+			return KB_OK;
+		}
+	}
 
 	return KB_NOTFOUND;
 
