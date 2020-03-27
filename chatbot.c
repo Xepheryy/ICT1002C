@@ -315,14 +315,13 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_smalltalk(const char *intent) {
 
-  /* initialise own question */
-char *smalltalk[] = {"Hi","Sup", "Hello","Yo","Greetings"};
 //Defining small talk items, including end phrases
 char *smalltalkitems[] = {"Hi","Sup", "Hello","Yo","Greetings","goodday","talk","bye","goodbye", "quit","it's","it","its"};
 
+//Calculating the total size of the length of the defined array
 	size_t smalltalkLength = sizeof(smalltalkitems) / sizeof(smalltalkitems[0]);
 
-//Checking the intent whether is it smalltalk
+//Using a for loop to loop throught the small talk array to check wehther intent matches any small talk phrases.
 	for(int i = 0; i< smalltalkLength; i++)
 	{
 		if(compare_token(intent,smalltalkitems[i]) == 0)
@@ -344,13 +343,14 @@ char *smalltalkitems[] = {"Hi","Sup", "Hello","Yo","Greetings","goodday","talk",
  * function is used.
  *
  * Returns:
- *   0, if the chatbot should continue chatting
+ *   0, if the chatbot should continue chatting, taking the to 
  *   1, if the chatbot should stop chatting (e.g. the smalltalk was "goodbye" etc.)
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
-//Defining the small talk answers
 	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"This Chatbot is programmed by Shaun, Eugene, Clement, Siong yong and Zames", "What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!","That's great"};
+
+  //Calculating the total length of the defined small talk output array
 	size_t smalltalkLength = sizeof(smalltalkOutput) / sizeof(smalltalkOutput[0]);
 
 //Checking to see the user input any of the end phrases
@@ -370,5 +370,4 @@ else{
 	snprintf(response, n, smalltalkOutput[randomOutput]);
   return 0;
 }
-
 }
