@@ -33,51 +33,7 @@
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
 
-	FILE *File = NULL;
-
 	/* to be implemented */
-	// Check if intent is valid
-	if(chatbot_is_question(intent) !=1){
-		return KB_INVALID;
-	}
-	
-	// if file can't be opened
-	if((File = fopen("ICT1002_Group_Project_Assignment_AY19_T2_Sample.ini" , "r")) == NULL){
-		return KB_NOTFOUND;
-	}
-
-	// initialise response buffer
-	ulong ulBufferLen = 1;			// Initial Buffer Length
-	response = NULL;
-
-	if(strcmp(intent, "who") == 0){
-		// iterate through ini file for 'who' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			response = (char*)malloc(ulBufferLen*sizeof(char));
-			
-			return KB_OK;
-		}
-	}
-	
-	if(strcmp(intent, "what") == 0){
-		// iterate through ini file for 'what' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			return KB_OK;
-		}
-	}
-	
-	if(strcmp(intent, "where") == 0){
-		// iterate through ini file for 'where' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			return KB_OK;
-		}
-	}
 
 	return KB_NOTFOUND;
 
@@ -119,10 +75,52 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 int knowledge_read(FILE *f) {
 
 	/* to be implemented */
+	// return int of how many entities in file
+	int totalentity = 0;
+	char* line =NULL;
+	size_t size = 32;
+	char *breaktxt;
+	char thisline[256];
+	char resp[256];
+	char intent[32];
+	char *allocated = malloc(size * sizeof(char));
+	char entity[64];
+	char check = "=";
 
-	return 0;
+	//get line params (line ptr ,size_t *n,file *stream)
+	//getline or getdelim return -1 on failure 
+	while((getline(&allocated,&size,f) != -1){
+		if(strstr(allocated,"what")){
+			//set intent to what
+			strcpy(intent,"What");
+		}
+		else if(strstr(allocated,"where")){
+			//set intent to where
+			strcpy(intent,"WHERE");
+		}
+		else if(strstr(allocated,"who")){
+			//set intent to who
+			strcpy(intent,"WHO");
+		}
+
+		if (strchr(allocated,check)){
+			//get everything before the = character
+			breaktxt = strtok(allocated,"=");
+			strcpy(entity,breaktxt); 
+			//strtok remembers the last string it worked with and where it ended. 
+			//To get the next string, call it again with NULL as first argument.
+			breaktxt = strtok(NULL,"=");
+			breaktxt[strcspn(breaktxt, "\n")] = 0; // Dont really understand what is being done here
+            strcpy(resp, breaktxt);
+            //knowledge_put(intent, entity, resp);    //i assume knowledge put takes 3 params and put to the hashtable ah
+            totalentity += 1;
+		}
+	}
+				// end of while loop 
+	//fflush(stdout);                                     // Flush any unecessary remaining input <- i also dk do wat
+    free(allocated);                                       // Free buffer dynamic memory
+	return totalentity;
 }
-
 
 /*
  * Reset the knowledge base, removing all know entitities from all intents.
