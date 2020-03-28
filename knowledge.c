@@ -16,7 +16,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
+#include "hashtable.c"
+#include <stdbool.h>
 
+
+hash_table *knowledge_base = NULL;
 /*
  * Get the response to a question.
  *
@@ -47,7 +51,7 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	}
 
 	// initialise response buffer
-	ulong ulBufferLen = 1;			// Initial Buffer Length
+	unsigned long ulBufferLen = 1;			// Initial Buffer Length
 	response = NULL;
 
 	if(strcmp(intent, "who") == 0){
@@ -100,10 +104,16 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
  *   KB_INVALID, if the intent is not a valid question word
  */
 int knowledge_put(const char *intent, const char *entity, const char *response) {
-
-	/* to be implemented */
-
-	return KB_INVALID;
+	check_for_knowledge_base();
+	chat_entry *chatEntry = create_chat_entry(intent, entity, response);
+	insert_into_hash_table(knowledge_base, chatEntry);
+	if (chatEntry == NULL)
+	{
+		return KB_NOMEM;
+	}
+	else {
+		return KB_OK;
+	}
 
 }
 
@@ -144,4 +154,16 @@ void knowledge_write(FILE *f) {
 
 	/* to be implemented */
 
+}
+
+/*
+* This function checks if the knowledge_base is NULL
+* If it is, it runs the create_hash_table() function
+* which should populate it with chat_entry structs.
+* This is a void function.
+*/
+void check_for_knowledge_base() {
+	if (knowledge_base == NULL) {
+		knowledge_base = create_hash_table();
+	}
 }
