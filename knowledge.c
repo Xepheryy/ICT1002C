@@ -44,44 +44,34 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	if(chatbot_is_question(intent) !=1){
 		return KB_INVALID;
 	}
-	
-	// if file can't be opened
-	if((File = fopen("ICT1002_Group_Project_Assignment_AY19_T2_Sample.ini" , "r")) == NULL){
-		return KB_NOTFOUND;
-	}
 
 	// initialise response buffer
 	unsigned long ulBufferLen = 1;			// Initial Buffer Length
 	response = NULL;
 
-	if(strcmp(intent, "who") == 0){
-		// iterate through ini file for 'who' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			response = (char*)malloc(ulBufferLen*sizeof(char));
-			
-			return KB_OK;
+	// Concatenate Intent and entity
+
+	char * token = strtok(entity, "");
+	char finalEntity[1000] = "";
+
+	// Check for useless words
+	while(token != NULL){
+		// If got useless words, replace with ""
+		// Add Space to it then concatenate to finalEntity
+		if(strcmp(token,"is") == 0 || strcmp(token,"are") == 0 || strcmp(token,"was") == 0 || strcmp(token,"were") == 0){
+			token = "";
+			strcat(token, " ");
+			strcat(finalEntity, token);
+		}
+		else{
+			strcat(token, " ");
+			strcat(finalEntity,token);
 		}
 	}
-	
-	if(strcmp(intent, "what") == 0){
-		// iterate through ini file for 'what' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			return KB_OK;
-		}
-	}
-	
-	if(strcmp(intent, "where") == 0){
-		// iterate through ini file for 'where' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			return KB_OK;
-		}
-	}
+
+	// Concatenate Intent and finalEntity to get Hased ID
+	strcat(intent, finalEntity);
+
 
 	return KB_NOTFOUND;
 
