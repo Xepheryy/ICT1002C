@@ -8,12 +8,12 @@
 
 typedef struct chat_entry {
 	/*
-	note that a key in this context, merely refers to the concatenated strings intent+entity 
-	this would be psuedounique, as one intent can have many entities,
+	note that a key in this context, merely refers to the concatenated stringsintent+entity 
+	this would be psuedounique, as oneintent can have many entities,
 	and one entity can have many intents 
 	*/
 	char *key;
-	char *intent;
+	char intent;
 	char *entity;
 	char *response;
 	struct chat_entry *next; //in case of collision
@@ -32,7 +32,6 @@ hash_table *create_hash_table(){
 
 	//create null chat_entries in hash_table 
 	hashtable->chat_entries = calloc(TABLE_SIZE,sizeof(chat_entry));
-
 
 	return hashtable;
 
@@ -62,22 +61,22 @@ void insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry) {
 	}
 
 	//in the event theres a collision
-	// chat_entry *prev;
-	// while (entry != NULL) {
-	// 	//means that collision occurred
-	// 	//if keys are same, replace
-	// 	if (strcmp(entry->key, chatEntry->key) == 0) {
-	// 		free(entry->response);
-	// 		entry->response = malloc (strlen(chatEntry->response) +1 );
-	// 		strcpy(entry->response, chatEntry->response);
-	// 		return;
-	// 	}
-	// 	//traverse entries
-	// 	prev = entry;
-	// 	entry = prev->next;
-	// }
-	//collision between two distinct intent and entity found
-	//prev->next = chatEntry;
+	chat_entry *prev;
+	while (entry != NULL) {
+		//means that collision occurred
+		//if keys are same, replace
+		if (strcmp(entry->key, chatEntry->key) == 0) {
+			free(entry->response);
+			entry->response = calloc(strlen(chatEntry->response) +1, 1 );
+			strcpy(entry->response, chatEntry->response);
+			return;
+		}
+		//traverse entries
+		prev = entry;
+		entry = prev->next;
+	}
+	//collision between two distinctintent and entity found
+	prev->next = chatEntry;
 }
 
 void ht_dump(hash_table *hashtable) {
@@ -104,38 +103,39 @@ void ht_dump(hash_table *hashtable) {
     }
 }
 
-chat_entry create_chat_entry(char* intent,const char* entity, char* response) {
-	chat_entry chatEntry;
+chat_entry *create_chat_entry(char*intent,const char* entity, char* response) {
+	chat_entry *chatEntry;
+	chatEntry = malloc (sizeof(chat_entry));
 	int sizeofKey = strlen(intent) + strlen(entity) + 1;
 	char *key2 = (char*) malloc (sizeofKey);
-	strcat(key2, intent);
+	strcat(key2,intent);
 	strcat(key2, entity);
-	chatEntry.key = (char *) malloc(sizeofKey);
-	strcpy(chatEntry.key, key2);
+	chatEntry->key = (char *) malloc(sizeofKey);
+	strcpy(chatEntry->key, key2);
 	
-	chatEntry.intent = malloc (strlen(intent) +1);
-	strcpy(chatEntry.intent, intent);
+	chatEntry->intent = malloc (strlen(intent) +1);
+	strcpy(chatEntry->intent,intent);
 	
-	chatEntry.entity = malloc (strlen(entity) +1);
-	strcpy(chatEntry.entity, entity);
+	chatEntry->entity = malloc (strlen(entity) +1);
+	strcpy(chatEntry->entity, entity);
 	
-	chatEntry.response = malloc (strlen(response) +1);
-	strcpy(chatEntry.response, response);
+	chatEntry->response = malloc (strlen(response) +1);
+	strcpy(chatEntry->response, response);
 	
-	chatEntry.next = NULL;
+	chatEntry->next = NULL;
 
 	return chatEntry;
 
 }
-int main() {
-	hash_table *hashTable = create_hash_table();
-	chat_entry chatEntry1 = create_chat_entry("What", "SIT", "an institution");
+// int main() {
+// 	hash_table *hashTable = create_hash_table();
+// 	chat_entry chatEntry1 = create_chat_entry("What", "SIT", "an institution");
 	
-	//insert into hashtable
-	insert_into_hash_table(hashTable, &chatEntry1);
-	ht_dump(hashTable);
-	return 0;
-}
+// 	//insert into hashtable
+// 	insert_into_hash_table(hashTable, &chatEntry1);
+// 	ht_dump(hashTable);
+// 	return 0;
+// }
 
 
 	
