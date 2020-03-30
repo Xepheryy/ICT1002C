@@ -335,12 +335,29 @@ if (compare_token(intent,"save")){       // Check if Intent is to SAVE
  * Returns:
  *   0 (the chatbot always continues chatting after saving knowledge)
  */
-int chatbot_do_save(int inc, char *inv[], char *response, int n) {
+int chatbot_do_save(int inc,char *inv[], char *response,int n){
+   if(inv[1]== NULL){
+       strcpy(response,"no file specified");
+   }
+   else{
+       FILE *file;
+       file = fopen(inv[1],"w");
+       if(file == NULL){
+           strcpy(response,"Error");
+       }
+       else{
 
-	/* to be implemented */
-
-	return 0;
-
+           knowledge_write(file);
+           if(ferror(file)){
+               snprintf(response,n,"failed to save to %s %s",inv[1]);
+           }
+           else{
+               snprintf(response,n,"saved to %s",file);
+           }
+       }
+       fclose(file);
+   }
+   return 0;
 }
 
 
