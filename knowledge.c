@@ -118,11 +118,48 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
  *
  * Returns: the number of entity/response pairs successful read from the file
  */
-int knowledge_read(FILE *f) {
+int knowledge_read(FILE * f){
+    char *line = NULL;
+    size_t sz = 0;
+    ssize_t len;
+    int entitycount = 0;
+    char entity[64];
+    char intent[32];
+    char response[256];
+    char *strsplit;
+    char *backstr;
 
-	/* to be implemented */
+    while(len = getline(&line,&sz,f) >= 0) {
+        
+        if (strstr(line,"what")){
+            strcpy(intent,"WHAT");
+            
+        }
+        else if(strstr(line,"where")){
+            strcpy(intent,"WHERE");
+            
+        }
 
-	return 0;
+        else if(strstr(line,"who")){
+            strcpy(intent,"WHO");
+           
+        }
+
+        if(strstr(line,"=")){
+            
+            strsplit = strtok(line,"=");
+            strcpy(entity,strsplit);
+            backstr = strtok(NULL,"=");
+            backstr =strtok(backstr,"\n");
+            strcpy(response,backstr);
+            printf("%s\n%s\n%s\n",intent,entity,response);
+            //knowledge_put(intent,entity,response); <- commented so my program doesnt break for now.
+            entitycount += 1; // inside here because count is added only when entity is found.
+        }
+    }
+    free(line);
+
+    return entitycount;
 }
 
 
