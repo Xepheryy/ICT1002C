@@ -72,54 +72,48 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
  *
  * Returns: the number of entity/response pairs successful read from the file
  */
-int knowledge_read(FILE *f) {
+int knowledge_read(FILE * f){
+    char *line = NULL;
+    size_t sz = 0;
+    ssize_t len;
+    int entitycount = 0;
+    char entity[64];
+    char intent[32];
+    char response[256];
+    char *strsplit;
+    char *backstr;
 
-	/* to be implemented */
-	// return int of how many entities in file
-	int totalentity = 0;
-	char* line =NULL;
-	size_t size = 32;
-	char *breaktxt;
-	char thisline[256];
-	char resp[256];
-	char intent[32];
-	char *allocated = malloc(size * sizeof(char));
-	char entity[64];
-	char check = "=";
+    while(len = getline(&line,&sz,f) >= 0) {
+        
+        if (strstr(line,"what")){
+            strcpy(intent,"WHAT");
+            
+        }
+        else if(strstr(line,"where")){
+            strcpy(intent,"WHERE");
+            
+        }
 
-	//get line params (line ptr ,size_t *n,file *stream)
-	//getline or getdelim return -1 on failure 
-	while((getline(&allocated,&size,f) != -1){
-		if(strstr(allocated,"what")){
-			//set intent to what
-			strcpy(intent,"What");
-		}
-		else if(strstr(allocated,"where")){
-			//set intent to where
-			strcpy(intent,"WHERE");
-		}
-		else if(strstr(allocated,"who")){
-			//set intent to who
-			strcpy(intent,"WHO");
-		}
+        else if(strstr(line,"who")){
+            strcpy(intent,"WHO");
+           
+        }
 
-		if (strchr(allocated,check)){
-			//get everything before the = character
-			breaktxt = strtok(allocated,"=");
-			strcpy(entity,breaktxt); 
-			//strtok remembers the last string it worked with and where it ended. 
-			//To get the next string, call it again with NULL as first argument.
-			breaktxt = strtok(NULL,"=");
-			breaktxt[strcspn(breaktxt, "\n")] = 0; // Dont really understand what is being done here
-            strcpy(resp, breaktxt);
-            //knowledge_put(intent, entity, resp);    //i assume knowledge put takes 3 params and put to the hashtable ah
-            totalentity += 1;
-		}
-	}
-				// end of while loop 
-	//fflush(stdout);                                     // Flush any unecessary remaining input <- i also dk do wat
-    free(allocated);                                       // Free buffer dynamic memory
-	return totalentity;
+        if(strstr(line,"=")){
+            
+            strsplit = strtok(line,"=");
+            strcpy(entity,strsplit);
+            backstr = strtok(NULL,"=");
+            backstr =strtok(backstr,"\n");
+            strcpy(response,backstr);
+            printf("%s\n%s\n%s\n",intent,entity,response);
+            //knowledge_put(intent,entity,response); <- commented so my program doesnt break for now.
+            entitycount += 1; // inside here because count is added only when entity is found.
+        }
+    }
+    free(line);
+
+    return entitycount;
 }
 
 /*
