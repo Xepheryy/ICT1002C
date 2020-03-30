@@ -105,6 +105,10 @@ void ht_dump(hash_table *hashtable) {
         printf("\n");
     }
 }
+//Function to clear hashtable
+void clearHashTable(hash_table *clearHashTable){
+  free(clearHashTable);
+}
 
 chat_entry create_chat_entry(char* intent,const char* entity, char* response) {
 	chat_entry chatEntry;

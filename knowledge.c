@@ -46,6 +46,11 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	if(chatbot_is_question(intent) !=1){
 		return KB_INVALID;
 	}
+	
+	// if file can't be opened
+	if((File = fopen("ICT1002_Group_Project_Assignment_AY19_T2_Sample.ini" , "r")) == NULL){
+		return KB_NOTFOUND;
+	}
 
 	// Concatenate Intent and entity
 	char * token = strtok(entity, "");
@@ -60,12 +65,25 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 			strcat(token, " ");
 			strcat(finalEntity, token);
 		}
-		else{
-			strcat(token, " ");
-			strcat(finalEntity,token);
+	}
+	
+	if(strcmp(intent, "what") == 0){
+		// iterate through ini file for 'what' answers
+		char *question = "";
+		if(strcmp(entity, question)){
+			// copy associated response to response buffer;
+			return KB_OK;
 		}
 	}
-
+	
+	if(strcmp(intent, "where") == 0){
+		// iterate through ini file for 'where' answers
+		char *question = "";
+		if(strcmp(entity, question)){
+			// copy associated response to response buffer;
+			return KB_OK;
+		}
+	}
 	// Gets the assoc response
 	chat_entry result = retrieve_chat_entry(knowledge_base, intent, finalEntity);
 
@@ -166,9 +184,12 @@ int knowledge_read(FILE * f){
 /*
  * Reset the knowledge base, removing all know entitities from all intents.
  */
+ 
 void knowledge_reset() {
-
-	/* to be implemented */
+  check_for_knowledge_base();               //check if knowledge base exists
+  hash_table *clearHT = knowledge_base;     //create new pointer to point to current knowledge base
+  knowledge_base = create_hash_table();     //move the global pointer to a new knowledge base
+  clearHashTable(clearHT);                  //clear the current knowledge base
 
 }
 
@@ -191,8 +212,11 @@ void knowledge_write(FILE *f) {
 * which should populate it with chat_entry structs.
 * This is a void function.
 */
+
+
 void check_for_knowledge_base() {
 	if (knowledge_base == NULL) {
 		knowledge_base = create_hash_table();
 	}
 }
+

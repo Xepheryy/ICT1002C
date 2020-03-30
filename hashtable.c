@@ -103,6 +103,11 @@ void ht_dump(hash_table *hashtable) {
     }
 }
 
+//Function to clear hashtable
+void clearHashTable(hash_table *clearHashTable){
+  free(clearHashTable);
+}
+
 chat_entry *create_chat_entry(char*intent,const char* entity, char* response) {
 	chat_entry *chatEntry;
 	chatEntry = malloc (sizeof(chat_entry));
