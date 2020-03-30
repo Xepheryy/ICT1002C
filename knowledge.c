@@ -137,11 +137,13 @@ int knowledge_read(FILE *f) {
 /*
  * Reset the knowledge base, removing all know entitities from all intents.
  */
- hash_table *clearHT;
+ 
 void knowledge_reset() {
-  check_for_knowledge_base();
-  clearHashTable(clearHT);
-  create_hash_table();
+  check_for_knowledge_base();               //check if knowledge base exists
+  hash_table *clearHT = knowledge_base;     //create new pointer to point to current knowledge base
+  knowledge_base = create_hash_table();     //move the global pointer to a new knowledge base
+  clearHashTable(clearHT);                  //clear the current knowledge base
+
 }
 
 
