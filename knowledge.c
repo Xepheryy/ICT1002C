@@ -17,7 +17,10 @@
 #include <string.h>
 #include "chat1002.h"
 #include "hashtable.c"
+#include "hashDemo.c"
 #include <stdbool.h>
+
+
 
 
 hash_table *knowledge_base = NULL;
@@ -36,8 +39,7 @@ hash_table *knowledge_base = NULL;
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
-
-	FILE *File = NULL;
+	check_for_knowledge_base();
 
 	/* to be implemented */
 	// Check if intent is valid
@@ -50,18 +52,18 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 		return KB_NOTFOUND;
 	}
 
-	// initialise response buffer
-	unsigned long ulBufferLen = 1;			// Initial Buffer Length
-	response = NULL;
+	// Concatenate Intent and entity
+	char * token = strtok(entity, "");
+	char finalEntity[1000] = "";
 
-	if(strcmp(intent, "who") == 0){
-		// iterate through ini file for 'who' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			response = (char*)malloc(ulBufferLen*sizeof(char));
-			
-			return KB_OK;
+	// Check for useless words
+	while(token != NULL){
+		// If got useless words, replace with ""
+		// Add Space to it then concatenate to finalEntity
+		if(strcmp(token,"is") == 0 || strcmp(token,"are") == 0 || strcmp(token,"was") == 0 || strcmp(token,"were") == 0){
+			token = "";
+			strcat(token, " ");
+			strcat(finalEntity, token);
 		}
 	}
 	
@@ -82,9 +84,17 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 			return KB_OK;
 		}
 	}
+	// Gets the assoc response
+	chat_entry result = retrieve_chat_entry(knowledge_base, intent, finalEntity);
+
+	// Check if response found
+	// if yes, copy to response buffer and return KB_OK
+	if(result.response != NULL){
+		strcpy(response, result.response);
+		return KB_OK;
+	}
 
 	return KB_NOTFOUND;
-
 }
 
 
@@ -126,11 +136,48 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
  *
  * Returns: the number of entity/response pairs successful read from the file
  */
-int knowledge_read(FILE *f) {
+int knowledge_read(FILE * f){
+    char *line = NULL;
+    size_t sz = 0;
+    ssize_t len;
+    int entitycount = 0;
+    char entity[64];
+    char intent[32];
+    char response[256];
+    char *strsplit;
+    char *backstr;
 
-	/* to be implemented */
+    while(len = getline(&line,&sz,f) >= 0) {
+        
+        if (strstr(line,"what")){
+            strcpy(intent,"WHAT");
+            
+        }
+        else if(strstr(line,"where")){
+            strcpy(intent,"WHERE");
+            
+        }
 
-	return 0;
+        else if(strstr(line,"who")){
+            strcpy(intent,"WHO");
+           
+        }
+
+        if(strstr(line,"=")){
+            
+            strsplit = strtok(line,"=");
+            strcpy(entity,strsplit);
+            backstr = strtok(NULL,"=");
+            backstr =strtok(backstr,"\n");
+            strcpy(response,backstr);
+            //printf("%s\n%s\n%s\n",intent,entity,response);
+            knowledge_put(intent,entity,response); <- commented so my program doesnt break for now.
+            entitycount += 1; // inside here because count is added only when entity is found.
+        }
+    }
+    free(line);
+
+    return entitycount;
 }
 
 

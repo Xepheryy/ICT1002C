@@ -42,7 +42,10 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "chat1002.h"
+
 
 
 /*
@@ -191,12 +194,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_question(const char *intent) {
 
-	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
-		return 1;
-	}
-
-	return 0;
-
+return compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0;
 }
 
 
@@ -215,10 +213,24 @@ int chatbot_is_question(const char *intent) {
  */
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 
-	/* to be implemented */
+char *intent = inv[0];
+char entity[MAX_ENTITY];
+char removed[MAX_ENTITY];
+char * ignorelist[] = {"is","are"};
 
-	return 0;
-
+if(knowledge_get(intent, entity, response, n) == KB_NOTFOUND){
+  char ans [MAX_RESPONSE];
+  prompt_user(ans, n, "I don't know. %s%s%s?",intent,removed,entity);
+  char *newans = trim(ans);
+  if (strlen(newans) !=0){
+    knowledge_put(intent, entity, newans);
+    snprintf(response, n, "Thank you for your input.");
+  }
+  else{
+    snprintf(response,n,"Something went wrong");
+  }
+}
+ return 0;
 }
 
 
@@ -232,9 +244,21 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "reset"
  *  0, otherwise
  */
+ // Author: Clement Leow
+ // Date: 28 Mar 2020
 int chatbot_is_reset(const char *intent) {
-
-	return compare_token(intent, "reset") == 0;
+	char *temp = strdup(intent);
+	unsigned char *tptr = (unsigned char *)temp;
+	while(*tptr) {
+    *tptr = tolower(*tptr);
+    tptr++;
+	}
+	if(strcmp(temp, "reset") == 0){
+		free(temp);
+		return 1;
+	}
+	free(temp);
+	return 0;
 
 }
 
@@ -368,4 +392,28 @@ else{
 	snprintf(response, n, smalltalkOutput[randomOutput]);
   return 0;
 }
+}
+
+/*
+Remove trailing andleading whitespaces from a given string
+*/
+char *trim(char *inputStr)
+{
+    char *endStr;
+
+    // Trim leading space
+    while(isspace((unsigned char)*inputStr)){
+        inputStr++;
+    }
+
+    // Trim trailing space
+    endStr = inputStr + strlen(inputStr) - 1;
+    while(endStr > inputStr && isspace((unsigned char)*endStr)) {
+        endStr--;
+    }
+
+    // Write new null terminator character
+    endStr[1] = '\0';
+
+    return inputStr;
 }

@@ -144,6 +144,7 @@ chat_entry retrieve_chat_entry(hash_table *hashTable, char *intent, char *entity
 	free(key);
 	return chatEntry;
 }
+
 int main() {
 	hash_table *hashTable = create_hash_table();
 	chat_entry chatEntry1 = create_chat_entry("What", "SIT", "an institution");
