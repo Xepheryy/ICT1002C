@@ -127,6 +127,7 @@ chat_entry *create_chat_entry(char*intent,const char* entity, char* response) {
 	return chatEntry;
 
 }
+
 // int main() {
 // 	hash_table *hashTable = create_hash_table();
 // 	chat_entry chatEntry1 = create_chat_entry("What", "SIT", "an institution");

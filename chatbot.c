@@ -42,6 +42,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "chat1002.h"
 
 
@@ -232,10 +234,23 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "reset"
  *  0, otherwise
  */
+ // Author: Clement Leow
+ // Date: 28 Mar 2020
 int chatbot_is_reset(const char *intent) {
+	char *temp = strdup(intent);
+	unsigned char *tptr = (unsigned char *)temp;
+	while(*tptr) {
+    *tptr = tolower(*tptr);
+    tptr++;
+	}
 
 	/* to be implemented */
+	if(strcmp(temp, "reset") == 0){
+		free(temp);
+		return 1;
+	}
 
+	free(temp);
 	return 0;
 
 }

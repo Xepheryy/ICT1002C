@@ -17,7 +17,10 @@
 #include <string.h>
 #include "chat1002.h"
 #include "hashtable.c"
+#include "hashDemo.c"
 #include <stdbool.h>
+
+
 
 
 hash_table *knowledge_base = NULL;
@@ -36,8 +39,7 @@ hash_table *knowledge_base = NULL;
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
-
-	FILE *File = NULL;
+	check_for_knowledge_base();
 
 	/* to be implemented */
 	// Check if intent is valid
@@ -45,12 +47,7 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 		return KB_INVALID;
 	}
 
-	// initialise response buffer
-	unsigned long ulBufferLen = 1;			// Initial Buffer Length
-	response = NULL;
-
 	// Concatenate Intent and entity
-
 	char * token = strtok(entity, "");
 	char finalEntity[1000] = "";
 
@@ -69,12 +66,17 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 		}
 	}
 
-	// Concatenate Intent and finalEntity to get Hased ID
-	strcat(intent, finalEntity);
+	// Gets the assoc response
+	chat_entry result = retrieve_chat_entry(knowledge_base, intent, finalEntity);
 
+	// Check if response found
+	// if yes, copy to response buffer and return KB_OK
+	if(result.response != NULL){
+		strcpy(response, result.response);
+		return KB_OK;
+	}
 
 	return KB_NOTFOUND;
-
 }
 
 
