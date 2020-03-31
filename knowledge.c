@@ -16,12 +16,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
-#include "hashtable.c"
-#include "hashDemo.c"
 #include <stdbool.h>
 
 
-
+void check_for_knowledge_base();
 
 hash_table *knowledge_base = NULL;
 /*
@@ -47,10 +45,10 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 		return KB_INVALID;
 	}
 	
-	// if file can't be opened
-	if((File = fopen("ICT1002_Group_Project_Assignment_AY19_T2_Sample.ini" , "r")) == NULL){
-		return KB_NOTFOUND;
-	}
+	// // if file can't be opened
+	// if((File = fopen("ICT1002_Group_Project_Assignment_AY19_T2_Sample.ini" , "r")) == NULL){
+	// 	return KB_NOTFOUND;
+	// }
 
 	// Concatenate Intent and entity
 	char * token = strtok(entity, "");
@@ -147,7 +145,7 @@ int knowledge_read(FILE * f){
     char *strsplit;
     char *backstr;
 
-    while(len = getline(&line,&sz,f) >= 0) {
+    while(len == getline(&line,&sz,f) >= 0) {
         
         if (strstr(line,"what")){
             strcpy(intent,"WHAT");
@@ -171,7 +169,7 @@ int knowledge_read(FILE * f){
             backstr =strtok(backstr,"\n");
             strcpy(response,backstr);
             //printf("%s\n%s\n%s\n",intent,entity,response);
-            knowledge_put(intent,entity,response); <- commented so my program doesnt break for now.
+            knowledge_put(intent,entity,response);
             entitycount += 1; // inside here because count is added only when entity is found.
         }
     }
