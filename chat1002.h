@@ -56,7 +56,33 @@ void knowledge_reset();
 int knowledge_read(FILE *f);
 void knowledge_write(FILE *f);
 
+typedef struct chat_entry {
+	/*
+	note that a key in this context, merely refers to the concatenated stringsintent+entity 
+	this would be psuedounique, as oneintent can have many entities,
+	and one entity can have many intents 
+	*/
+	char *key;
+	char intent;
+	char *entity;
+	char *response;
+	struct chat_entry *next; //in case of collision
+} chat_entry;
+
+typedef struct {
+	chat_entry **chat_entries;
+} hash_table;
+
 /* New functions */
 char * trim();
+hash_table *create_hash_table();
+unsigned long hash(const char * str);
+void insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry);
+void ht_dump(hash_table *hashtable);
+void clearHashTable(hash_table *clearHashTable);
+chat_entry retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity);
+chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response);
+
+
 
 #endif

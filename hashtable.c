@@ -3,26 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "chat1002.h"
+
 
 #define TABLE_SIZE 1000
-
-typedef struct chat_entry {
-	/*
-	note that a key in this context, merely refers to the concatenated stringsintent+entity 
-	this would be psuedounique, as oneintent can have many entities,
-	and one entity can have many intents 
-	*/
-	char *key;
-	char intent;
-	char *entity;
-	char *response;
-	struct chat_entry *next; //in case of collision
-} chat_entry;
-
-typedef struct {
-	chat_entry **chat_entries;
-} hash_table;
-
 /*
 Function to create the hash table with the specified TABLE_SIZE
 */
@@ -36,9 +20,12 @@ hash_table *create_hash_table(){
 	return hashtable;
 
 }
-
+/*
+Hash function using djb2 algorithm
+returns unsigned long
+*/
 unsigned long hash(const char * str){
-    //Hash function using djb2 algorithm
+    
     unsigned long magic_number = 5381;
     int i;
     for(i = 0; i < strlen(str); i++){
@@ -108,9 +95,19 @@ void clearHashTable(hash_table *clearHashTable){
   free(clearHashTable);
 }
 
-chat_entry *create_chat_entry(char*intent,const char* entity, char* response) {
+chat_entry retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity)
+{
+	//get key to hash
+	char *key = (char *) malloc (strlen(intent) + strlen(entity) + 1);
+	strcat(key, intent);
+	strcat(key, entity);
+	chat_entry chatEntry = *hashTable->chat_entries[hash(key)];
+	free(key);
+	return chatEntry;
+}
+
+chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response) {
 	chat_entry *chatEntry;
-	chatEntry = malloc (sizeof(chat_entry));
 	int sizeofKey = strlen(intent) + strlen(entity) + 1;
 	char *key2 = (char*) malloc (sizeofKey);
 	strcat(key2,intent);
@@ -118,13 +115,13 @@ chat_entry *create_chat_entry(char*intent,const char* entity, char* response) {
 	chatEntry->key = (char *) malloc(sizeofKey);
 	strcpy(chatEntry->key, key2);
 	
-	chatEntry->intent = malloc (strlen(intent) +1);
-	strcpy(chatEntry->intent,intent);
+	chatEntry->intent = * (char *) malloc (strlen(intent) +1);
+	strcpy(&chatEntry->intent,intent);
 	
-	chatEntry->entity = malloc (strlen(entity) +1);
+	chatEntry->entity = (char *) malloc (strlen(entity) +1);
 	strcpy(chatEntry->entity, entity);
 	
-	chatEntry->response = malloc (strlen(response) +1);
+	chatEntry->response = (char *) malloc (strlen(response) +1);
 	strcpy(chatEntry->response, response);
 	
 	chatEntry->next = NULL;
