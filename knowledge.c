@@ -162,7 +162,7 @@ int knowledge_read(FILE * f){
             backstr =strtok(backstr,"\n");
             strcpy(response,backstr);
             printf("%s\n%s\n%s\n",intent,entity,response);
-            //knowledge_put(intent,entity,response);
+            knowledge_put(intent,entity,response);
             entitycount += 1; // inside here because count is added only when entity is found.
         }
 		// if(feof(f)){
