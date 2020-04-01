@@ -37,58 +37,25 @@ hash_table *knowledge_base = NULL;
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
+	// Check if knowledgebase exists
 	check_for_knowledge_base();
 
-	/* to be implemented */
+	// Resets the response buffer to empty
+	memset(response,0,0);
+
 	// Check if intent is valid
 	if(chatbot_is_question(intent) !=1){
+		snprintf(response, MAX_RESPONSE, "I don't recognise %s.", intent);
 		return KB_INVALID;
 	}
-	
-	// // if file can't be opened
-	// if((File = fopen("ICT1002_Group_Project_Assignment_AY19_T2_Sample.ini" , "r")) == NULL){
-	// 	return KB_NOTFOUND;
-	// }
 
-	// Concatenate Intent and entity
-	char * token = strtok(entity, "");
-	char finalEntity[1000] = "";
-
-	// Check for useless words
-	while(token != NULL){
-		// If got useless words, replace with ""
-		// Add Space to it then concatenate to finalEntity
-		if(strcmp(token,"is") == 0 || strcmp(token,"are") == 0 || strcmp(token,"was") == 0 || strcmp(token,"were") == 0){
-			token = "";
-			strcat(token, " ");
-			strcat(finalEntity, token);
-		}
-	}
-	
-	if(strcmp(intent, "what") == 0){
-		// iterate through ini file for 'what' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			return KB_OK;
-		}
-	}
-	
-	if(strcmp(intent, "where") == 0){
-		// iterate through ini file for 'where' answers
-		char *question = "";
-		if(strcmp(entity, question)){
-			// copy associated response to response buffer;
-			return KB_OK;
-		}
-	}
 	// Gets the assoc response
-	chat_entry result = retrieve_chat_entry(knowledge_base, intent, finalEntity);
-
+	chat_entry result = retrieve_chat_entry(knowledge_base, intent, entity);
+	// Copy response into reponse buffer (could be NULL)
+	snprintf(response, MAX_RESPONSE, "%s", result.response);
 	// Check if response found
-	// if yes, copy to response buffer and return KB_OK
-	if(result.response != NULL){
-		strcpy(response, result.response);
+	// if yes, return KB_OK
+	if(response != NULL){
 		return KB_OK;
 	}
 

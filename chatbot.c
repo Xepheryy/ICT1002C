@@ -253,7 +253,6 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 	}
 	return 0;
 }
-
 /*
  * Determine whether an intent is RESET.
  *
