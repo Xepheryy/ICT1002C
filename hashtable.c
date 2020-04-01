@@ -44,27 +44,9 @@ void insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry) {
 	//get pointer to position in hashtable
 	chat_entry *entry = hashTable->chat_entries[position];
 	//if entry is null, means that no prev entry, insertion possible
-	if (entry == NULL) {
-		hashTable->chat_entries[position] = chatEntry;
-	}
+	hashTable->chat_entries[position] = chatEntry;
 
-	//in the event theres a collision
-	chat_entry *prev;
-	while (entry != NULL) {
-		//means that collision occurred
-		//if keys are same, replace
-		if (strcmp(entry->key, chatEntry->key) == 0) {
-			free(entry->response);
-			entry->response = calloc(strlen(chatEntry->response) +1, 1 );
-			strcpy(entry->response, chatEntry->response);
-			return;
-		}
-		//traverse entries
-		prev = entry;
-		entry = prev->next;
-	}
-	//collision between two distinctintent and entity found
-	prev->next = chatEntry;
+	
 }
 
 void ht_dump(hash_table *hashtable) {
@@ -119,7 +101,9 @@ chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const
 }
 
 chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response) {
+	printf("Create");
 	chat_entry *chatEntry;
+	chatEntry = malloc(sizeof(chat_entry));
 	int sizeofKey = strlen(intent) + strlen(entity) + 1;
 	char *key2 = (char*) malloc (sizeofKey);
 	strcat(key2,intent);

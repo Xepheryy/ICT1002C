@@ -256,7 +256,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 	{
 		printf("KB_NOTFOUND");
 		char ans[MAX_RESPONSE];
-		prompt_user(ans, n, "I don't know. %s%s%s?", intent, removed, entity);
+		prompt_user(ans, n, "I don't know. %s %s%s?", intent, removed, entity);
 		char *newans = trim(ans);
 		if (strlen(newans) != 0)
 		{

@@ -103,6 +103,7 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 int knowledge_put(const char *intent, const char *entity, const char *response) {
 	check_for_knowledge_base();
 	chat_entry *chatEntry = create_chat_entry(intent, entity, response);
+	printf("chatentry test %s", chatEntry->key);
 	insert_into_hash_table(knowledge_base, chatEntry);
 	if (chatEntry == NULL)
 	{
