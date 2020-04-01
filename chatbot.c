@@ -172,32 +172,25 @@ int chatbot_is_load(const char *intent)
 int chatbot_do_load(int inc, char *inv[], char *response, int n)
 {
 
-	/* to be implemented */
-	int count = 0;
+	int linecount = 0;
 
-	if (inv[1] == NULL)
-	{
-		strcpy(response, "No file input");
-	}
-	else
-	{
-		FILE *f;
-		f = fopen(inv[1], "r");
-		if (f == NULL)
-		{
-			strcpy(response, "error");
-		}
-		else
-		{
-
-			count = knowledge_read(f);
-			// snprintf params (buffer , buffer size,format similar to printf, filename <- i think so)
-			snprintf(response, n, " Read %d responses in %s", count, inv[1]);
-			fclose(f);
-		}
-	}
-
-	return 0;
+    if (inv[1] == NULL){
+        strcpy(response,"No file inputted!");					// Error Response for No Input for File
+    }
+    else {
+        FILE *file;
+        
+        if (file = fopen(inv[1], "r")){							// Open File for Reading
+        	linecount = knowledge_read(file);					// Get number of entries inserted
+            fclose(file);										// Close file pointer
+           	snprintf(response, n,"Read %d responses from %s", linecount, inv[1]);
+        }
+        else{
+            strcpy(response,"File not found!");					// Error response for File Not Found
+        }
+    }
+    return 0;
+	 
 }
 
 /*
