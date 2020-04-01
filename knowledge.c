@@ -100,12 +100,11 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 int knowledge_put(const char *intent, const char *entity, const char *response) {
 	check_for_knowledge_base();
 	chat_entry *chatEntry = create_chat_entry(intent, entity, response);
-	printf("chatentry test %s", chatEntry->key);
 	if (insert_into_hash_table(knowledge_base, chatEntry) == 0) {
-		printf("FUCK YOU\n");
+		printf("Entered into hash Table\n");
 	}
 	else {
-		printf("NIMAM\n");
+		printf("Insert Failed\n");
 	}
 	printf("insert success test %s", chatEntry->key);
 	if (chatEntry == NULL)
@@ -199,10 +198,92 @@ void knowledge_reset() {
  */
 void knowledge_write(FILE *f) {
 
-	/* to be implemented */
+    // Checking for knowledge base   
+    check_for_knowledge_base();
 
+	printf("Begin knowledge_write initialization tasks\n");
+	chat_entry 	*whatList[1000];
+	chat_entry 	*whoList[1000]; 
+	chat_entry 	*whereList[1000];
+	int 	whatC = 0;
+	int		whoC = 0;
+	int 	whereC = 0;
+
+	ht_dump(knowledge_base);
+	printf("Initialising loop sequence\n");
+	// Loop through whole table
+    for(int i=0; i<1000; i++){
+		
+        chat_entry * entry;
+		
+		entry = malloc(sizeof(1000));
+		
+		entry = knowledge_base -> chat_entries[i];
+		
+		
+        if(entry != NULL){
+			if(strcmp(entry->intent, "WHAT") == 0 || strcmp(entry->intent, "What") == 0 || strcmp(entry->intent, "what") == 0){
+				printf("PING");
+				whatList[whatC] = entry;
+				whatC++;
+			}
+			else if(strcmp(entry->intent, "WHO") == 0 || strcmp(entry->intent, "Who") == 0 || strcmp(entry->intent, "who") == 0){
+				whoList[whoC] = entry;
+				whoC++;
+			}
+			else if(strcmp(entry->intent, "WHERE") == 0 || strcmp(entry->intent, "Where") == 0 || strcmp(entry->intent, "where") == 0){
+				whereList[whereC] = entry;
+				whereC++;
+			}
+		}
+	}
+
+	// printf("[WHAT]\n");
+	
+	// for(int i=0; i<whatC; i++){
+	//  	printf("%s=%s\n", whatList[i]->entity, whatList[i]->response);
+	// 	}
+		
+	// printf("\n- - - - - - - - - -\n[WHERE]\n");
+
+	// for(int i=0; i<whereC; i++){
+	//  	printf("%s=%s\n", whereList[i]->entity, whereList[i]->response);
+	//  	}
+	
+	// printf("\n- - - - - - - - - -\n[WHO]\n");
+	
+	// for(int i=0; i<whoC; i++){
+	// 	printf("%s=%s\n", whoList[i]->entity, whoList[i]->response);
+	// 	 }
+
+
+	/******************************************************************/
+
+
+	fprintf(f,"[what]\n");
+	
+	for(int i=0; i<whatC; i++){
+	 	fprintf(f,"%s=%s\n", whatList[i]->entity, whatList[i]->response);
+		}
+		
+	fprintf(f,"\n[where]\n");
+
+	for(int i=0; i<whereC; i++){
+	 	fprintf(f,"%s=%s\n", whereList[i]->entity, whereList[i]->response);
+	 	}
+	
+	fprintf(f,"\n[who]\n");
+	
+	for(int i=0; i<whoC; i++){
+		fprintf(f,"%s=%s\n", whoList[i]->entity, whoList[i]->response);
+		}
+
+	
+
+	
+
+	
 }
-
 /*
 * This function checks if the knowledge_base is NULL
 * If it is, it runs the create_hash_table() function
@@ -220,3 +301,6 @@ void check_for_knowledge_base() {
 	printf("Has KB\n");
 }
 
+void knowledgedump(){
+	ht_dump(knowledge_base);
+}

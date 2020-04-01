@@ -62,7 +62,13 @@ void ht_dump(hash_table *hashtable) {
         printf("slot[%4d]: ", i);
 
         for(;;) {
-            printf("%s", entry->key);
+            printf("%s\t", entry->key);
+			
+            printf("%s\t", entry->intent);
+			
+            printf("%s\t", entry->entity);
+			
+            printf("%s\n", entry->response);
 
             if (entry->next == NULL) {
                 break;
@@ -100,24 +106,26 @@ chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const
 }
 
 chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response) {
-	printf("Create\n");
 	chat_entry *chatEntry;
 	chatEntry = malloc(sizeof(chat_entry));
 	int sizeofKey = strlen(intent) + strlen(entity) + 1;
 	char *key2 = (char*) malloc (sizeofKey);
-	strcat(key2,intent);
+	strcat(key2, intent);
 	strcat(key2, entity);
 	chatEntry->key = (char *) malloc(sizeofKey);
 	strcpy(chatEntry->key, key2);
 	
-	chatEntry->intent = * (char *) malloc (strlen(intent) +1);
-	strcpy(&chatEntry->intent,intent);
+	chatEntry->intent =  (char *) malloc (strlen(intent) +1);
+	strcpy(chatEntry->intent,intent);
+	printf("--->INTENT: %s<---", chatEntry->intent);
 	
 	chatEntry->entity = (char *) malloc (strlen(entity) +1);
 	strcpy(chatEntry->entity, entity);
+	printf("--->ENTITY: %s<---", chatEntry->entity);
 	
 	chatEntry->response = (char *) malloc (strlen(response) +1);
 	strcpy(chatEntry->response, response);
+	printf("--->RESPONSE: %s<---", chatEntry->response);
 	
 	chatEntry->next = NULL;
 	printf("Exit Create Chat Entry \n");

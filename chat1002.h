@@ -49,12 +49,16 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n);
 int chatbot_is_smalltalk(const char *intent);
 int chatbot_do_smalltalk(int inc, char *inv[], char *resonse, int n);
 
+
+int chatbot_do_dump(int inc, char *inv[], char *response, int n);
+
 /* functions defined in knowledge.c */
 int knowledge_get(const char *intent, const char *entity, char *response, int n);
 int knowledge_put(const char *intent, const char *entity, const char *response);
 void knowledge_reset();
 int knowledge_read(FILE *f);
 void knowledge_write(FILE *f);
+void knowledgedump();
 
 typedef struct chat_entry {
 	/*
@@ -63,7 +67,7 @@ typedef struct chat_entry {
 	and one entity can have many intents 
 	*/
 	char *key;
-	char intent;
+	char *intent;
 	char *entity;
 	char *response;
 	struct chat_entry *next; //in case of collision

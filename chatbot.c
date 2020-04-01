@@ -43,6 +43,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include "chat1002.h"
 
@@ -101,6 +102,8 @@ int chatbot_main(int inc, char *inv[], char *response, int n)
 		return chatbot_do_reset(inc, inv, response, n);
 	else if (chatbot_is_save(inv[0]))
 		return chatbot_do_save(inc, inv, response, n);
+	else if (strcmp(inv[0], "dump") == 0)
+		return chatbot_do_dump(inc, inv, response, n);
 	else
 	{
 		snprintf(response, n, "I don't understand \"%s\".", inv[0]);
@@ -141,6 +144,12 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n)
 	return 1;
 }
 
+int chatbot_do_dump(int inc, char *inv[], char *response, int n){
+	knowledgedump();
+	snprintf(response, n, "Dump!");
+	return 0;
+}
+
 /*
  * Determine whether an intent is LOAD.
  *
@@ -175,7 +184,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n)
 	int linecount = 0;
 
     if (inv[1] == NULL){
-        strcpy(response,"No file inputted!");					// Error Response for No Input for File
+        strcpy(response,"No file input!");					// Error Response for No Input for File
     }
     else {
         FILE *file;
@@ -232,6 +241,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 	printf("enter do_question\n");
 	char *intent = inv[0];
 	char *backup;
+	bool cleaned = false;
 	
 	char entity[MAX_ENTITY];
 	strcpy(entity, "");
@@ -241,26 +251,37 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 	while (inv[i] != NULL){
 			strcat(entity, " ");
 			strcat(entity, inv[i]);
-			printf("%s\n", entity);
 		i++;
 	}
 	backup = (char *) malloc(strlen(intent) + strlen(entity) + 1);
 
 	strcpy(backup, intent);
 	strcat(backup, entity);
-	printf("%s\n", backup);
 
-	i = 2;
+	if(strcmp(inv[1] , "is") == 0 || strcmp(inv[1], "are") == 0 || strcmp(inv[1], "was") == 0 || strcmp(inv[1],"were") == 0 ){
+		strcpy(inv[1], "");
+		cleaned = true;
+	}
+
+	i = 1;
 	strcpy(entity, "");
 	while (inv[i] != NULL){
-		if(i==2){
+		printf("-%s-", inv[i]);
+		if(i==1){		
 			strcat(entity, inv[i]);
-			printf("%s\n", entity);
+			printf("--->%s\n", entity);
 		}
 		else{
-			strcat(entity, " ");
-			strcat(entity, inv[i]);
-			printf("%s\n", entity);		
+			if(cleaned){
+				strcat(entity, inv[i]);
+				printf("--->%s\n", entity);
+				cleaned = false;
+			}
+			else{
+				strcat(entity, " ");
+				strcat(entity, inv[i]);
+				printf("----->%s\n", entity);
+			}	
 		}
 		i++;
 	}
@@ -268,9 +289,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 	char removed[MAX_ENTITY];
 	char *ignorelist[] = {"is", "are", "was", "were"};
 
-	if(strcmp(inv[1] , "is") || strcmp(inv[1], "are") || strcmp(inv[1], "was") || strcmp(inv[1],"were")){
-		strcpy(inv[1], "");
-	}
+	
 	
 	if (knowledge_get(intent, entity, response, n) == KB_NOTFOUND)
 	{
@@ -379,8 +398,10 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n)
 	{
 		FILE *file;
 		file = fopen(inv[1], "w");
+		printf("File Opened!\n");
 		if (file == NULL)
 		{
+
 			strcpy(response, "Error");
 		}
 		else
