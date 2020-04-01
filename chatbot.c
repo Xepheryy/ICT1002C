@@ -42,32 +42,31 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include "chat1002.h"
-
 
 /*
  * Get the name of the chatbot.
  *
  * Returns: the name of the chatbot as a null-terminated string
  */
-const char *chatbot_botname() {
+const char *chatbot_botname()
+{
 
 	return "Harwinder";
-
 }
-
 
 /*
  * Get the name of the user.
  *
  * Returns: the name of the user as a null-terminated string
  */
-const char *chatbot_username() {
+const char *chatbot_username()
+{
 
 	return "User";
-
 }
-
 
 /*
  * Get a response to user input.
@@ -79,10 +78,12 @@ const char *chatbot_username() {
  *   0, if the chatbot should continue chatting
  *   1, if the chatbot should stop (i.e. it detected the EXIT intent)
  */
-int chatbot_main(int inc, char *inv[], char *response, int n) {
-
+int chatbot_main(int inc, char *inv[], char *response, int n)
+{ 
+  printf("Enters chatbot main\n");
 	/* check for empty input */
-	if (inc < 1) {
+	if (inc < 1)
+	{
 		snprintf(response, n, "");
 		return 0;
 	}
@@ -95,18 +96,17 @@ int chatbot_main(int inc, char *inv[], char *response, int n) {
 	else if (chatbot_is_load(inv[0]))
 		return chatbot_do_load(inc, inv, response, n);
 	else if (chatbot_is_question(inv[0]))
-		return chatbot_do_question(inc, inv, response, n);
+    	return chatbot_do_question(inc, inv, response, n);
 	else if (chatbot_is_reset(inv[0]))
 		return chatbot_do_reset(inc, inv, response, n);
 	else if (chatbot_is_save(inv[0]))
 		return chatbot_do_save(inc, inv, response, n);
-	else {
+	else
+	{
 		snprintf(response, n, "I don't understand \"%s\".", inv[0]);
 		return 0;
 	}
-
 }
-
 
 /*
  * Determine whether an intent is EXIT.
@@ -118,12 +118,11 @@ int chatbot_main(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "exit" or "quit"
  *  0, otherwise
  */
-int chatbot_is_exit(const char *intent) {
+int chatbot_is_exit(const char *intent)
+{
 
 	return compare_token(intent, "exit") == 0 || compare_token(intent, "quit") == 0;
-
 }
-
 
 /*
  * Perform the EXIT intent.
@@ -134,14 +133,13 @@ int chatbot_is_exit(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after a question)
  */
-int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
+int chatbot_do_exit(int inc, char *inv[], char *response, int n)
+{
 
 	snprintf(response, n, "Goodbye!");
 
 	return 1;
-
 }
-
 
 /*
  * Determine whether an intent is LOAD.
@@ -153,14 +151,14 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "load"
  *  0, otherwise
  */
-int chatbot_is_load(const char *intent) {
-    if (strcmp(intent, "load") == 0) {
-        return 1;
-    }
-    return 0;
+int chatbot_is_load(const char *intent)
+{
+	if (strcmp(intent, "load") == 0)
+	{
+		return 1;
+	}
+	return 0;
 }
-
-
 
 /*
  * Load a chatbot's knowledge base from a file.
@@ -171,14 +169,29 @@ int chatbot_is_load(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after loading knowledge)
  */
-int chatbot_do_load(int inc, char *inv[], char *response, int n) {
+int chatbot_do_load(int inc, char *inv[], char *response, int n)
+{
 
-	/* to be implemented */
+	int linecount = 0;
 
-	return 0;
-
+    if (inv[1] == NULL){
+        strcpy(response,"No file inputted!");					// Error Response for No Input for File
+    }
+    else {
+        FILE *file;
+        
+        if (file = fopen(inv[1], "r")){							// Open File for Reading
+        	linecount = knowledge_read(file);					// Get number of entries inserted
+            fclose(file);										// Close file pointer
+           	snprintf(response, n,"Read %d responses from %s", linecount, inv[1]);
+        }
+        else{
+            strcpy(response,"File not found!");					// Error response for File Not Found
+        }
+    }
+    return 0;
+	 
 }
-
 
 /*
  * Determine whether an intent is a question.
@@ -190,16 +203,16 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "what", "where", or "who"
  *  0, otherwise
  */
-int chatbot_is_question(const char *intent) {
-
-	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
+int chatbot_is_question(const char *intent)
+{
+	printf("Entered is_question\n");
+	if(compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0){
+		printf("Is a Qn\n");
 		return 1;
 	}
-
+	printf("Is not a Qn\n");
 	return 0;
-
 }
-
 
 /*
  * Answer a question.
@@ -214,15 +227,50 @@ int chatbot_is_question(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after a question)
  */
-int chatbot_do_question(int inc, char *inv[], char *response, int n) {
-
-	/* to be implemented */
-
+int chatbot_do_question(int inc, char *inv[], char *response, int n)
+{
+	printf("enter do_question\n");
+	char *intent = inv[0];
+	char entity[MAX_ENTITY];
+	strcpy(entity, "");
+	int i = 1;
+	while (inv[i] != NULL){
+		if(i==1){
+			strcat(entity, inv[i]);
+			printf("%s\n", entity);
+		}
+		else{
+			strcat(entity, " ");
+			strcat(entity, inv[i]);
+			printf("%s\n", entity);
+		}
+		i++;
+	}
+	
+	printf("WTF is going on?");
+	
+	char removed[MAX_ENTITY];
+	char *ignorelist[] = {"is", "are"};
+	printf("breakpoint\n");
+	if (knowledge_get(intent, entity, response, n) == KB_NOTFOUND)
+	{
+		printf("KB_NOTFOUND");
+		char ans[MAX_RESPONSE];
+		prompt_user(ans, n, "I don't know. %s%s%s?", intent, removed, entity);
+		char *newans = trim(ans);
+		if (strlen(newans) != 0)
+		{
+			knowledge_put(intent, entity, newans);
+			snprintf(response, n, "Thank you for your input.");
+		}
+		else
+		{
+			snprintf(response, n, "Something went wrong");
+		}
+	}
+	printf("returning 0\n");
 	return 0;
-
 }
-
-
 /*
  * Determine whether an intent is RESET.
  *
@@ -233,14 +281,25 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "reset"
  *  0, otherwise
  */
-int chatbot_is_reset(const char *intent) {
-
-	/* to be implemented */
-
+// Author: Clement Leow
+// Date: 28 Mar 2020
+int chatbot_is_reset(const char *intent)
+{
+	char *temp = strdup(intent);
+	unsigned char *tptr = (unsigned char *)temp;
+	while (*tptr)
+	{
+		*tptr = tolower(*tptr);
+		tptr++;
+	}
+	if (strcmp(temp, "reset") == 0)
+	{
+		free(temp);
+		return 1;
+	}
+	free(temp);
 	return 0;
-
 }
-
 
 /*
  * Reset the chatbot.
@@ -251,14 +310,14 @@ int chatbot_is_reset(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after beign reset)
  */
-int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
+int chatbot_do_reset(int inc, char *inv[], char *response, int n)
+{
 
-	/* to be implemented */
+	knowledge_reset();
+	snprintf(response, n, "%s resetted", chatbot_botname());
 
 	return 0;
-
 }
-
 
 /*
  * Determine whether an intent is SAVE.
@@ -270,19 +329,17 @@ int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "what", "where", or "who"
  *  0, otherwise
  */
-int chatbot_is_save(const char *intent) {
-if (compare_token(intent,"save")){       // Check if Intent is to SAVE
-        return 0;                           // Return 0 if Intent is to SAVE
-    }
-    else {
-        return 1;                      
-    }
-	
-
-	
-
+int chatbot_is_save(const char *intent)
+{
+	if (compare_token(intent, "save"))
+	{			  // Check if Intent is to SAVE
+		return 0; // Return 0 if Intent is to SAVE
+	}
+	else
+	{
+		return 1;
+	}
 }
-
 
 /*
  * Save the chatbot's knowledge to a file.
@@ -293,14 +350,37 @@ if (compare_token(intent,"save")){       // Check if Intent is to SAVE
  * Returns:
  *   0 (the chatbot always continues chatting after saving knowledge)
  */
-int chatbot_do_save(int inc, char *inv[], char *response, int n) {
+int chatbot_do_save(int inc, char *inv[], char *response, int n)
+{
+	if (inv[1] == NULL)
+	{
+		strcpy(response, "no file specified");
+	}
+	else
+	{
+		FILE *file;
+		file = fopen(inv[1], "w");
+		if (file == NULL)
+		{
+			strcpy(response, "Error");
+		}
+		else
+		{
 
-	/* to be implemented */
-
+			knowledge_write(file);
+			if (ferror(file))
+			{
+				snprintf(response, n, "failed to save to %s", inv[1]);
+			}
+			else
+			{
+				snprintf(response, n, "saved to %s", inv[1]);
+			}
+		}
+		fclose(file);
+	}
 	return 0;
-
 }
-
 
 /*
  * Determine which an intent is smalltalk.
@@ -313,30 +393,26 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is the first word of one of the smalltalk phrases
  *  0, otherwise
  */
-int chatbot_is_smalltalk(const char *intent) {
+int chatbot_is_smalltalk(const char *intent)
+{
 
-  /* initialise own question */
-char *smalltalk[] = {"Hi","Sup", "Hello","Yo","Greetings"};
-char smalltalkqns[MAX_INPUT];
+	//Defining small talk items, including end phrases
+	char *smalltalkitems[] = {"Hi", "Sup", "Hello", "Yo", "Greetings", "goodday", "talk", "bye", "goodbye", "quit", "it's", "it", "its"};
 
-//FILE *fptr;
-//char file[MAX_INPUT] = "Small_talk_qns.txt";
-//fptr = fopen(file, "r"); 
+	//Calculating the total size of the length of the defined array
+	size_t smalltalkLength = sizeof(smalltalkitems) / sizeof(smalltalkitems[0]);
 
-	size_t smalltalkLength = sizeof(smalltalk) / sizeof(smalltalk[0]);
-	for(int i = 0; i< smalltalkLength; i++)
+	//Using a for loop to loop throught the small talk array to check wehther intent matches any small talk phrases.
+	for (int i = 0; i < smalltalkLength; i++)
 	{
-		if(compare_token(intent,smalltalk[i]) == 0)
+		if (compare_token(intent, smalltalkitems[i]) == 0)
 		{
 			return 1;
 		}
 	}
 
-
 	return 0;
-
 }
-
 
 /*
  * Respond to smalltalk.
@@ -345,25 +421,61 @@ char smalltalkqns[MAX_INPUT];
  * function is used.
  *
  * Returns:
- *   0, if the chatbot should continue chatting
+ *   0, if the chatbot should continue chatting, taking the to 
  *   1, if the chatbot should stop chatting (e.g. the smalltalk was "goodbye" etc.)
  */
-int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
+int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n)
+{
 
-//Defining the small talk answers
-	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening" ,"This Chatbot is programmed by Shaun, Eugene, Clement, Siong yong and Zames", "What's up?",  "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!"};
+	char *smalltalkOutput[] = {"Hi", "good morning/afternoon/evening", "What's up?", "Hi!", "Sup!", "How are you!", "Ni Hao!", "Yo!", "LOL!", "Greetings!", "That's great"};
+
+	//Calculating the total length of the defined small talk output array
 	size_t smalltalkLength = sizeof(smalltalkOutput) / sizeof(smalltalkOutput[0]);
 
-//Checking to see the user input any of the end phrases
-if (compare_token("bye",inv[0])==0 || compare_token("goodbye",inv[0])==0 || compare_token("quit",inv[0])==0){
-            snprintf(response,n,"bye!");
-            return 1;
-}
-//If not any of the end phrases, return the normal small talk output
-else{
-  int randomOutput = rand() % smalltalkLength;
-	snprintf(response, n, smalltalkOutput[randomOutput]);
-  return 0;
+	//Checking to see the user input any of the end phrases
+	if (compare_token("bye", inv[0]) == 0 || compare_token("goodbye", inv[0]) == 0 || compare_token("quit", inv[0]) == 0)
+	{
+		snprintf(response, n, "bye!");
+		return 1;
+	}
+	//Agreeing with the user
+	else if (compare_token("it", inv[0]) == 0 || compare_token("it's", inv[0]) == 0 || compare_token("its", inv[0]) == 0)
+	{
+		snprintf(response, n, "Indeed it is.");
+		return 0;
+	}
+
+	//If not any of the end phrases, return the normal small talk output
+	else
+	{
+		int randomOutput = rand() % smalltalkLength;
+		snprintf(response, n, "%s", smalltalkOutput[randomOutput]);
+		return 0;
+	}
 }
 
+/*
+Remove trailing andleading whitespaces from a given string
+*/
+char *trim(char *inputStr)
+{
+	char *endStr;
+
+	// Trim leading space
+	while (isspace((unsigned char)*inputStr))
+	{
+		inputStr++;
+	}
+
+	// Trim trailing space
+	endStr = inputStr + strlen(inputStr) - 1;
+	while (endStr > inputStr && isspace((unsigned char)*endStr))
+	{
+		endStr--;
+	}
+
+	// Write new null terminator character
+	endStr[1] = '\0';
+
+	return inputStr;
 }
