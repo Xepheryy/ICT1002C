@@ -15,7 +15,8 @@ hash_table *create_hash_table(){
 	hash_table *hashtable = malloc(sizeof(hash_table) * 1);
 
 	//create null chat_entries in hash_table 
-	hashtable->chat_entries = calloc(TABLE_SIZE,sizeof(chat_entry));
+	hashtable->chat_entries = malloc(sizeof(chat_entry) * TABLE_SIZE);
+	//hashtable->chat_entries = calloc(TABLE_SIZE,sizeof(chat_entry));
 
 	return hashtable;
 
@@ -95,7 +96,7 @@ void clearHashTable(hash_table *clearHashTable){
   free(clearHashTable);
 }
 
-chat_entry retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity)
+chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity)
 {
 	printf("%s\n", intent);
 	printf("%s\n", entity);
@@ -104,17 +105,17 @@ chat_entry retrieve_chat_entry(hash_table *hashTable, const char *intent, const 
 	printf("malloc for Key\n");
 	printf("intent length: %lu\n", strlen(intent));
 	printf("entity length: %lu\n", strlen(entity));
-	char *key = (char *) malloc (strlen(intent) + strlen(entity) + 2);
-	printf("key = intent");
+	char *key = (char *) malloc (strlen(intent) + strlen(entity) + 1);
 	strcpy(key, intent);
-	printf("concatenate key and entity");
 	strcat(key, entity);
-	printf("getting chat entry");
-	chat_entry chatEntry = *hashTable->chat_entries[hash(key)];
-	printf("free key\n");
-	free(key);
+	printf("key = %s", key);
+	printf("hash = %lu", hash(key));
+	chat_entry *chatEntry = hashTable->chat_entries[hash(key)];
+	//printf("%s", hashTable->chat_entries[hash(key)]->entity);
 	printf("returning chatEntry\n");
+	free(key);
 	return chatEntry;
+	
 }
 
 chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response) {

@@ -53,9 +53,18 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 		
 		printf("%s\n", intent);
 		printf("%s\n", entity);
-		chat_entry result = retrieve_chat_entry(knowledge_base, intent, entity);
+		if ( retrieve_chat_entry(knowledge_base, intent, entity) == NULL) {
+			printf("Clearing response buffer\n");
+			snprintf(response, strlen(intent)+20, "I don't recognise %s.", intent);
+			printf("return -2");
+			return KB_NOTFOUND;
+		}
+		else {
+			chat_entry *chatEntry= retrieve_chat_entry(knowledge_base, intent, entity);
+			snprintf(response, MAX_RESPONSE, "%s", chatEntry->response);
+		}
 		// Copy response into reponse buffer (could be NULL)
-		snprintf(response, MAX_RESPONSE, "%s", result.response);
+		
 	}
 	else{
 		printf("Clearing response buffer\n");

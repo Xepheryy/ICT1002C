@@ -80,7 +80,7 @@ unsigned long hash(const char * str);
 void insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry);
 void ht_dump(hash_table *hashtable);
 void clearHashTable(hash_table *clearHashTable);
-chat_entry retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity);
+chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity);
 chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response);
 
 
