@@ -42,9 +42,9 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	check_for_knowledge_base();
 
 	// Resets the response buffer to empty
-	printf("Clearing response buffer\n");
-	memset(response,0,0);
-	printf("Cleared response buffer\n");
+	// printf("Clearing response buffer\n");
+	// memset(response,0,0);
+	// printf("Cleared response buffer\n");
 
 	// Check if intent is valid
 	if(chatbot_is_question(intent) == 1){
@@ -55,25 +55,22 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 		printf("%s\n", entity);
 		if ( retrieve_chat_entry(knowledge_base, intent, entity) == NULL) {
 			printf("Clearing response buffer\n");
-			snprintf(response, strlen(intent)+20, "I don't recognise %s.", intent);
+			snprintf(response, n, "I don't recognise %s.", intent);
 			printf("return -2");
 			return KB_NOTFOUND;
 		}
 		else {
 			chat_entry *chatEntry= retrieve_chat_entry(knowledge_base, intent, entity);
-			snprintf(response, MAX_RESPONSE, "%s", chatEntry->response);
+			snprintf(response, n, "%s", chatEntry->response);
+			printf("%s", response);
 		}
-		// Copy response into reponse buffer (could be NULL)
-		
 	}
 	else{
 		printf("Clearing response buffer\n");
-		snprintf(response, strlen(intent)+20, "I don't recognise %s.", intent);
+		snprintf(response, n, "I don't recognise %s.", intent);
 		printf("return -2");
 		return KB_INVALID;
 	}
-
-	
 	// Check if response found
 	// if yes, return KB_OK
 	if(response != NULL){
@@ -104,7 +101,13 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 	check_for_knowledge_base();
 	chat_entry *chatEntry = create_chat_entry(intent, entity, response);
 	printf("chatentry test %s", chatEntry->key);
-	insert_into_hash_table(knowledge_base, chatEntry);
+	if (insert_into_hash_table(knowledge_base, chatEntry) == 0) {
+		printf("FUCK YOU\n");
+	}
+	else {
+		printf("NIMAM\n");
+	}
+	printf("insert success test %s", chatEntry->key);
 	if (chatEntry == NULL)
 	{
 		return KB_NOMEM;

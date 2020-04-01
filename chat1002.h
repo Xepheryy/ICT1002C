@@ -77,7 +77,7 @@ typedef struct {
 char * trim();
 hash_table *create_hash_table();
 unsigned long hash(const char * str);
-void insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry);
+int insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry);
 void ht_dump(hash_table *hashtable);
 void clearHashTable(hash_table *clearHashTable);
 chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity);

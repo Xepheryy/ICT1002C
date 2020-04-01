@@ -37,16 +37,18 @@ unsigned long hash(const char * str){
     return magic_number % TABLE_SIZE;
 }
 
-void insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry) {
+int insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry) {
+	printf("Enter insert");
 	//generate hash for array position
 	unsigned long position = hash(chatEntry->key);
 	printf("Position = %lu\n", position);
-	//get pointer to position in hashtable
-	chat_entry *entry = hashTable->chat_entries[position];
-	//if entry is null, means that no prev entry, insertion possible
 	hashTable->chat_entries[position] = chatEntry;
-
-	
+	if (hashTable->chat_entries[position]->key != NULL){
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 void ht_dump(hash_table *hashtable) {
@@ -80,8 +82,6 @@ void clearHashTable(hash_table *clearHashTable){
 
 chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity)
 {
-	printf("%s\n", intent);
-	printf("%s\n", entity);
 	printf("Enter retrieve func\n");
 	//get key to hash
 	printf("malloc for Key\n");
@@ -90,18 +90,17 @@ chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const
 	char *key = (char *) malloc (strlen(intent) + strlen(entity) + 1);
 	strcpy(key, intent);
 	strcat(key, entity);
-	printf("key = %s", key);
-	printf("hash = %lu", hash(key));
+	printf("key = %s\n", key);
+	printf("hash = %lu\n", hash(key));
 	chat_entry *chatEntry = hashTable->chat_entries[hash(key)];
 	//printf("%s", hashTable->chat_entries[hash(key)]->entity);
 	printf("returning chatEntry\n");
 	free(key);
 	return chatEntry;
-	
 }
 
 chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response) {
-	printf("Create");
+	printf("Create\n");
 	chat_entry *chatEntry;
 	chatEntry = malloc(sizeof(chat_entry));
 	int sizeofKey = strlen(intent) + strlen(entity) + 1;
@@ -121,7 +120,7 @@ chat_entry *create_chat_entry(const char* intent,const char* entity, const char*
 	strcpy(chatEntry->response, response);
 	
 	chatEntry->next = NULL;
-
+	printf("Exit Create Chat Entry \n");
 	return chatEntry;
 
 }

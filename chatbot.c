@@ -96,7 +96,7 @@ int chatbot_main(int inc, char *inv[], char *response, int n)
 	else if (chatbot_is_load(inv[0]))
 		return chatbot_do_load(inc, inv, response, n);
 	else if (chatbot_is_question(inv[0]))
-    	return chatbot_do_question(inc, inv, response, n);
+		return chatbot_do_question(inc, inv, response, n);
 	else if (chatbot_is_reset(inv[0]))
 		return chatbot_do_reset(inc, inv, response, n);
 	else if (chatbot_is_save(inv[0]))
@@ -231,32 +231,52 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 {
 	printf("enter do_question\n");
 	char *intent = inv[0];
+	char *backup;
+	
 	char entity[MAX_ENTITY];
 	strcpy(entity, "");
+
+
 	int i = 1;
 	while (inv[i] != NULL){
-		if(i==1){
+			strcat(entity, " ");
+			strcat(entity, inv[i]);
+			printf("%s\n", entity);
+		i++;
+	}
+	backup = (char *) malloc(strlen(intent) + strlen(entity) + 1);
+
+	strcpy(backup, intent);
+	strcat(backup, entity);
+	printf("%s\n", backup);
+
+	i = 2;
+	strcpy(entity, "");
+	while (inv[i] != NULL){
+		if(i==2){
 			strcat(entity, inv[i]);
 			printf("%s\n", entity);
 		}
 		else{
 			strcat(entity, " ");
 			strcat(entity, inv[i]);
-			printf("%s\n", entity);
+			printf("%s\n", entity);		
 		}
 		i++;
 	}
 	
-	printf("WTF is going on?");
-	
 	char removed[MAX_ENTITY];
-	char *ignorelist[] = {"is", "are"};
-	printf("breakpoint\n");
+	char *ignorelist[] = {"is", "are", "was", "were"};
+
+	if(strcmp(inv[1] , "is") || strcmp(inv[1], "are") || strcmp(inv[1], "was") || strcmp(inv[1],"were")){
+		strcpy(inv[1], "");
+	}
+	
 	if (knowledge_get(intent, entity, response, n) == KB_NOTFOUND)
 	{
-		printf("KB_NOTFOUND");
+		printf("KB_NOTFOUND\n");
 		char ans[MAX_RESPONSE];
-		prompt_user(ans, n, "I don't know. %s %s%s?", intent, removed, entity);
+		prompt_user(ans, n, "I don't know. %s?", backup);
 		char *newans = trim(ans);
 		if (strlen(newans) != 0)
 		{
@@ -268,7 +288,6 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 			snprintf(response, n, "Something went wrong");
 		}
 	}
-	printf("returning 0\n");
 	return 0;
 }
 /*
