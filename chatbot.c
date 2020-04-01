@@ -79,7 +79,8 @@ const char *chatbot_username()
  *   1, if the chatbot should stop (i.e. it detected the EXIT intent)
  */
 int chatbot_main(int inc, char *inv[], char *response, int n)
-{
+{ 
+  printf("Enters chatbot main");
 	/* check for empty input */
 	if (inc < 1)
 	{
@@ -94,8 +95,10 @@ int chatbot_main(int inc, char *inv[], char *response, int n)
 		return chatbot_do_smalltalk(inc, inv, response, n);
 	else if (chatbot_is_load(inv[0]))
 		return chatbot_do_load(inc, inv, response, n);
-	else if (chatbot_is_question(inv[0]))
+	else if (chatbot_is_question(inv[0])){
+    printf ("Comes to is question");
 		return chatbot_do_question(inc, inv, response, n);
+  }
 	else if (chatbot_is_reset(inv[0]))
 		return chatbot_do_reset(inc, inv, response, n);
 	else if (chatbot_is_save(inv[0]))
