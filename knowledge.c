@@ -137,15 +137,18 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 int knowledge_read(FILE * f){
     char *line = NULL;
     size_t sz = 0;
-    ssize_t len;
     int entitycount = 0;
     char entity[64];
     char intent[32];
     char response[256];
     char *strsplit;
     char *backstr;
+	//printf("Test");
+    while(getline(&line,&sz,f) != -1) {
 
-    while(len == getline(&line,&sz,f) >= 0) {
+		//printf("%s",line);
+		//printf("%d",len);
+		//printf("test");
         
         if (strstr(line,"what")){
             strcpy(intent,"WHAT");
@@ -168,16 +171,19 @@ int knowledge_read(FILE * f){
             backstr = strtok(NULL,"=");
             backstr =strtok(backstr,"\n");
             strcpy(response,backstr);
-            //printf("%s\n%s\n%s\n",intent,entity,response);
-            knowledge_put(intent,entity,response);
+            printf("%s\n%s\n%s\n",intent,entity,response);
+            //knowledge_put(intent,entity,response);
             entitycount += 1; // inside here because count is added only when entity is found.
         }
+		// if(feof(f)){
+		// 	break;
+		// }
     }
-    free(line);
-
+    if (line) {
+		free(line);
+	}
     return entitycount;
 }
-
 
 /*
  * Reset the knowledge base, removing all know entitities from all intents.
