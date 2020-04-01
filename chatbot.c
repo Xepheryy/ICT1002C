@@ -80,7 +80,7 @@ const char *chatbot_username()
  */
 int chatbot_main(int inc, char *inv[], char *response, int n)
 { 
-  printf("Enters chatbot main");
+  printf("Enters chatbot main\n");
 	/* check for empty input */
 	if (inc < 1)
 	{
@@ -95,10 +95,8 @@ int chatbot_main(int inc, char *inv[], char *response, int n)
 		return chatbot_do_smalltalk(inc, inv, response, n);
 	else if (chatbot_is_load(inv[0]))
 		return chatbot_do_load(inc, inv, response, n);
-	else if (chatbot_is_question(inv[0])){
-    printf ("Comes to is question");
-		return chatbot_do_question(inc, inv, response, n);
-  }
+	else if (chatbot_is_question(inv[0]))
+    	return chatbot_do_question(inc, inv, response, n);
 	else if (chatbot_is_reset(inv[0]))
 		return chatbot_do_reset(inc, inv, response, n);
 	else if (chatbot_is_save(inv[0]))
@@ -214,8 +212,13 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n)
  */
 int chatbot_is_question(const char *intent)
 {
-
-	return compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0;
+	printf("Entered is_question\n");
+	if(compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0){
+		printf("Is a Qn\n");
+		return 1;
+	}
+	printf("Is not a Qn\n");
+	return 0;
 }
 
 /*
@@ -233,14 +236,32 @@ int chatbot_is_question(const char *intent)
  */
 int chatbot_do_question(int inc, char *inv[], char *response, int n)
 {
-
+	printf("enter do_question\n");
 	char *intent = inv[0];
 	char entity[MAX_ENTITY];
+	strcpy(entity, "");
+	int i = 1;
+	while (inv[i] != NULL){
+		if(i==1){
+			strcat(entity, inv[i]);
+			printf("%s\n", entity);
+		}
+		else{
+			strcat(entity, " ");
+			strcat(entity, inv[i]);
+			printf("%s\n", entity);
+		}
+		i++;
+	}
+	
+	printf("WTF is going on?");
+	
 	char removed[MAX_ENTITY];
 	char *ignorelist[] = {"is", "are"};
-
+	printf("breakpoint\n");
 	if (knowledge_get(intent, entity, response, n) == KB_NOTFOUND)
 	{
+		printf("KB_NOTFOUND");
 		char ans[MAX_RESPONSE];
 		prompt_user(ans, n, "I don't know. %s%s%s?", intent, removed, entity);
 		char *newans = trim(ans);
@@ -254,6 +275,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 			snprintf(response, n, "Something went wrong");
 		}
 	}
+	printf("returning 0\n");
 	return 0;
 }
 /*
@@ -359,7 +381,7 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n)
 			}
 			else
 			{
-				snprintf(response, n, "saved to %s", file);
+				snprintf(response, n, "saved to %s", inv[1]);
 			}
 		}
 		fclose(file);
@@ -434,7 +456,7 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n)
 	else
 	{
 		int randomOutput = rand() % smalltalkLength;
-		snprintf(response, n, smalltalkOutput[randomOutput]);
+		snprintf(response, n, "%s", smalltalkOutput[randomOutput]);
 		return 0;
 	}
 }

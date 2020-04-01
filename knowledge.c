@@ -37,28 +37,41 @@ hash_table *knowledge_base = NULL;
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
+	printf("Enters knowledge_get\n");
 	// Check if knowledgebase exists
 	check_for_knowledge_base();
 
 	// Resets the response buffer to empty
+	printf("Clearing response buffer\n");
 	memset(response,0,0);
+	printf("Cleared response buffer\n");
 
 	// Check if intent is valid
-	if(chatbot_is_question(intent) !=1){
-		snprintf(response, MAX_RESPONSE, "I don't recognise %s.", intent);
+	if(chatbot_is_question(intent) == 1){
+		printf("good query\n");
+		// Gets the assoc response
+		
+		printf("%s\n", intent);
+		printf("%s\n", entity);
+		chat_entry result = retrieve_chat_entry(knowledge_base, intent, entity);
+		// Copy response into reponse buffer (could be NULL)
+		snprintf(response, MAX_RESPONSE, "%s", result.response);
+	}
+	else{
+		printf("Clearing response buffer\n");
+		snprintf(response, strlen(intent)+20, "I don't recognise %s.", intent);
+		printf("return -2");
 		return KB_INVALID;
 	}
 
-	// Gets the assoc response
-	chat_entry result = retrieve_chat_entry(knowledge_base, intent, entity);
-	// Copy response into reponse buffer (could be NULL)
-	snprintf(response, MAX_RESPONSE, "%s", result.response);
+	
 	// Check if response found
 	// if yes, return KB_OK
 	if(response != NULL){
+		printf("return 0\n");
 		return KB_OK;
 	}
-
+	printf("return -1");
 	return KB_NOTFOUND;
 }
 
@@ -180,8 +193,11 @@ void knowledge_write(FILE *f) {
 
 
 void check_for_knowledge_base() {
+	printf("Checking Knowledge\n");
 	if (knowledge_base == NULL) {
+		printf("Creating hash_table\n");
 		knowledge_base = create_hash_table();
 	}
+	printf("Has KB\n");
 }
 

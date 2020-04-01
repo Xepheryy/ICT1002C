@@ -97,12 +97,23 @@ void clearHashTable(hash_table *clearHashTable){
 
 chat_entry retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity)
 {
+	printf("%s\n", intent);
+	printf("%s\n", entity);
+	printf("Enter retrieve func\n");
 	//get key to hash
-	char *key = (char *) malloc (strlen(intent) + strlen(entity) + 1);
-	strcat(key, intent);
+	printf("malloc for Key\n");
+	printf("intent length: %lu\n", strlen(intent));
+	printf("entity length: %lu\n", strlen(entity));
+	char *key = (char *) malloc (strlen(intent) + strlen(entity) + 2);
+	printf("key = intent");
+	strcpy(key, intent);
+	printf("concatenate key and entity");
 	strcat(key, entity);
+	printf("getting chat entry");
 	chat_entry chatEntry = *hashTable->chat_entries[hash(key)];
+	printf("free key\n");
 	free(key);
+	printf("returning chatEntry\n");
 	return chatEntry;
 }
 
