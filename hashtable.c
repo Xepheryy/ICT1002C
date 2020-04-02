@@ -38,10 +38,8 @@ unsigned long hash(const char * str){
 }
 
 int insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry) {
-	printf("Enter insert");
 	//generate hash for array position
 	unsigned long position = hash(chatEntry->key);
-	printf("Position = %lu\n", position);
 	hashTable->chat_entries[position] = chatEntry;
 	if (hashTable->chat_entries[position]->key != NULL){
 		return 0;
@@ -59,7 +57,6 @@ void ht_dump(hash_table *hashtable) {
             continue;
         }
 
-        printf("slot[%4d]: ", i);
 
         for(;;) {
             printf("%s\t", entry->key);
@@ -88,19 +85,10 @@ void clearHashTable(hash_table *clearHashTable){
 
 chat_entry *retrieve_chat_entry(hash_table *hashTable, const char *intent, const char *entity)
 {
-	printf("Enter retrieve func\n");
-	//get key to hash
-	printf("malloc for Key\n");
-	printf("intent length: %lu\n", strlen(intent));
-	printf("entity length: %lu\n", strlen(entity));
 	char *key = (char *) malloc (strlen(intent) + strlen(entity) + 1);
 	strcpy(key, intent);
 	strcat(key, entity);
-	printf("key = %s\n", key);
-	printf("hash = %lu\n", hash(key));
 	chat_entry *chatEntry = hashTable->chat_entries[hash(key)];
-	//printf("%s", hashTable->chat_entries[hash(key)]->entity);
-	printf("returning chatEntry\n");
 	free(key);
 	return chatEntry;
 }
@@ -117,18 +105,14 @@ chat_entry *create_chat_entry(const char* intent,const char* entity, const char*
 	
 	chatEntry->intent =  (char *) malloc (strlen(intent) +1);
 	strcpy(chatEntry->intent,intent);
-	printf("--->INTENT: %s<---", chatEntry->intent);
 	
 	chatEntry->entity = (char *) malloc (strlen(entity) +1);
 	strcpy(chatEntry->entity, entity);
-	printf("--->ENTITY: %s<---", chatEntry->entity);
 	
 	chatEntry->response = (char *) malloc (strlen(response) +1);
 	strcpy(chatEntry->response, response);
-	printf("--->RESPONSE: %s<---", chatEntry->response);
-	
+
 	chatEntry->next = NULL;
-	printf("Exit Create Chat Entry \n");
 	return chatEntry;
 
 }
