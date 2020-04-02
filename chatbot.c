@@ -180,25 +180,25 @@ int chatbot_is_load(const char *intent)
 int chatbot_do_load(int inc, char *inv[], char *response, int n)
 {
 
-	int linecount = 0;
+    int linecount = 0;
 
     if (inv[1] == NULL){
-        strcpy(response,"No file input!");					// Error Response for No Input for File
+        strcpy(response,"No file input!");                    // Error Response for No Input for File
     }
     else {
         FILE *file;
-        
-        if (file = fopen(inv[1], "r")){							// Open File for Reading
-        	linecount = knowledge_read(file);					// Get number of entries inserted
-            fclose(file);										// Close file pointer
-           	snprintf(response, n,"Read %d responses from %s", linecount, inv[1]);
+        file = fopen(inv[1], "r");
+        if (file != NULL){ // Open File for Reading
+            linecount = knowledge_read(file);                    // Get number of entries inserted
+            fclose(file);                                        // Close file pointer
+               snprintf(response, n,"Read %d responses from %s", linecount, inv[1]);
         }
         else{
-            strcpy(response,"File not found!");					// Error response for File Not Found
+            strcpy(response,"File not found!");                    // Error response for File Not Found
         }
     }
     return 0;
-	 
+
 }
 
 /*
@@ -262,21 +262,17 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 	i = 1;
 	strcpy(entity, "");
 	while (inv[i] != NULL){
-		printf("-%s-", inv[i]);
 		if(i==1){		
 			strcat(entity, inv[i]);
-			printf("--->%s\n", entity);
 		}
 		else{
 			if(cleaned){
 				strcat(entity, inv[i]);
-				printf("--->%s\n", entity);
 				cleaned = false;
 			}
 			else{
 				strcat(entity, " ");
 				strcat(entity, inv[i]);
-				printf("----->%s\n", entity);
 			}	
 		}
 		i++;

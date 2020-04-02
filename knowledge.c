@@ -49,8 +49,6 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	if(chatbot_is_question(intent) == 1){
 		// Gets the assoc response
 		
-		printf("%s\n", intent);
-		printf("%s\n", entity);
 		if ( retrieve_chat_entry(knowledge_base, intent, entity) == NULL) {
 			snprintf(response, n, "I don't recognise %s.", intent);
 			return KB_NOTFOUND;
