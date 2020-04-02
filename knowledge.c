@@ -37,7 +37,6 @@ hash_table *knowledge_base = NULL;
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
-	printf("Enters knowledge_get\n");
 	// Check if knowledgebase exists
 	check_for_knowledge_base();
 
@@ -48,36 +47,28 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 
 	// Check if intent is valid
 	if(chatbot_is_question(intent) == 1){
-		printf("good query\n");
 		// Gets the assoc response
 		
 		printf("%s\n", intent);
 		printf("%s\n", entity);
 		if ( retrieve_chat_entry(knowledge_base, intent, entity) == NULL) {
-			printf("Clearing response buffer\n");
 			snprintf(response, n, "I don't recognise %s.", intent);
-			printf("return -2");
 			return KB_NOTFOUND;
 		}
 		else {
 			chat_entry *chatEntry= retrieve_chat_entry(knowledge_base, intent, entity);
 			snprintf(response, n, "%s", chatEntry->response);
-			printf("%s", response);
 		}
 	}
 	else{
-		printf("Clearing response buffer\n");
 		snprintf(response, n, "I don't recognise %s.", intent);
-		printf("return -2");
 		return KB_INVALID;
 	}
 	// Check if response found
 	// if yes, return KB_OK
 	if(response != NULL){
-		printf("return 0\n");
 		return KB_OK;
 	}
-	printf("return -1");
 	return KB_NOTFOUND;
 }
 
@@ -101,20 +92,11 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 	check_for_knowledge_base();
 	chat_entry *chatEntry = create_chat_entry(intent, entity, response);
 	if (insert_into_hash_table(knowledge_base, chatEntry) == 0) {
-		printf("Entered into hash Table\n");
-	}
-	else {
-		printf("Insert Failed\n");
-	}
-	printf("insert success test %s", chatEntry->key);
-	if (chatEntry == NULL)
-	{
-		return KB_NOMEM;
-	}
-	else {
 		return KB_OK;
 	}
-
+	else {
+		return KB_NOMEM;
+	}
 }
 
 
@@ -135,12 +117,7 @@ int knowledge_read(FILE * f){
     char response[256];
     char *strsplit;
     char *backstr;
-	//printf("Test");
     while(getline(&line,&sz,f) != -1) {
-
-		//printf("%s",line);
-		//printf("%d",len);
-		//printf("test");
         
         if (strstr(line,"what")){
             strcpy(intent,"WHAT");
@@ -163,13 +140,10 @@ int knowledge_read(FILE * f){
             backstr = strtok(NULL,"=");
             backstr =strtok(backstr,"\n");
             strcpy(response,backstr);
-            printf("%s\n%s\n%s\n",intent,entity,response);
             knowledge_put(intent,entity,response);
             entitycount += 1; // inside here because count is added only when entity is found.
         }
-		// if(feof(f)){
-		// 	break;
-		// }
+		
     }
     if (line) {
 		free(line);
@@ -200,8 +174,6 @@ void knowledge_write(FILE *f) {
 
     // Checking for knowledge base   
     check_for_knowledge_base();
-
-	printf("Begin knowledge_write initialization tasks\n");
 	chat_entry 	*whatList[1000];
 	chat_entry 	*whoList[1000]; 
 	chat_entry 	*whereList[1000];
@@ -209,21 +181,19 @@ void knowledge_write(FILE *f) {
 	int		whoC = 0;
 	int 	whereC = 0;
 
-	ht_dump(knowledge_base);
-	printf("Initialising loop sequence\n");
+	// ht_dump(knowledge_base);
 	// Loop through whole table
     for(int i=0; i<1000; i++){
 		
         chat_entry * entry;
 		
-		entry = malloc(sizeof(1000));
+		entry = malloc(sizeof(chat_entry));
 		
 		entry = knowledge_base -> chat_entries[i];
 		
 		
         if(entry != NULL){
 			if(strcmp(entry->intent, "WHAT") == 0 || strcmp(entry->intent, "What") == 0 || strcmp(entry->intent, "what") == 0){
-				printf("PING");
 				whatList[whatC] = entry;
 				whatC++;
 			}
@@ -260,6 +230,7 @@ void knowledge_write(FILE *f) {
 	/******************************************************************/
 
 
+	// Write to file
 	fprintf(f,"[what]\n");
 	
 	for(int i=0; i<whatC; i++){
@@ -293,12 +264,9 @@ void knowledge_write(FILE *f) {
 
 
 void check_for_knowledge_base() {
-	printf("Checking Knowledge\n");
 	if (knowledge_base == NULL) {
-		printf("Creating hash_table\n");
 		knowledge_base = create_hash_table();
 	}
-	printf("Has KB\n");
 }
 
 void knowledgedump(){

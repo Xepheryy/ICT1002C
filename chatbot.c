@@ -81,7 +81,6 @@ const char *chatbot_username()
  */
 int chatbot_main(int inc, char *inv[], char *response, int n)
 { 
-  printf("Enters chatbot main\n");
 	/* check for empty input */
 	if (inc < 1)
 	{
@@ -214,12 +213,10 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n)
  */
 int chatbot_is_question(const char *intent)
 {
-	printf("Entered is_question\n");
 	if(compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0){
-		printf("Is a Qn\n");
+		
 		return 1;
 	}
-	printf("Is not a Qn\n");
 	return 0;
 }
 
@@ -238,7 +235,6 @@ int chatbot_is_question(const char *intent)
  */
 int chatbot_do_question(int inc, char *inv[], char *response, int n)
 {
-	printf("enter do_question\n");
 	char *intent = inv[0];
 	char *backup;
 	bool cleaned = false;
@@ -293,7 +289,6 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n)
 	
 	if (knowledge_get(intent, entity, response, n) == KB_NOTFOUND)
 	{
-		printf("KB_NOTFOUND\n");
 		char ans[MAX_RESPONSE];
 		prompt_user(ans, n, "I don't know. %s?", backup);
 		char *newans = trim(ans);
@@ -398,7 +393,6 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n)
 	{
 		FILE *file;
 		file = fopen(inv[1], "w");
-		printf("File Opened!\n");
 		if (file == NULL)
 		{
 
