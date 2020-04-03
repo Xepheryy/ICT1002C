@@ -70,7 +70,6 @@ typedef struct chat_entry {
 	char *intent;
 	char *entity;
 	char *response;
-	struct chat_entry *next; //in case of collision
 } chat_entry;
 
 typedef struct {
