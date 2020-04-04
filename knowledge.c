@@ -19,8 +19,6 @@
 #include <stdbool.h>
 
 
-void check_for_knowledge_base();
-
 hash_table *knowledge_base = NULL;
 /*
  * Get the response to a question.
@@ -40,14 +38,8 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 	// Check if knowledgebase exists
 	check_for_knowledge_base();
 
-	// Resets the response buffer to empty
-	// printf("Clearing response buffer\n");
-	// memset(response,0,0);
-	// printf("Cleared response buffer\n");
-
 	// Check if intent is valid
 	if(chatbot_is_question(intent) == 1){
-		// Gets the assoc response
 		
 		if ( retrieve_chat_entry(knowledge_base, intent, entity) == NULL) {
 			snprintf(response, n, "I don't recognise %s.", intent);
@@ -172,24 +164,22 @@ void knowledge_write(FILE *f) {
 
     // Checking for knowledge base   
     check_for_knowledge_base();
-	chat_entry 	*whatList[1000];
-	chat_entry 	*whoList[1000]; 
-	chat_entry 	*whereList[1000];
+	chat_entry 	*whatList[TABLE_SIZE];
+	chat_entry 	*whoList[TABLE_SIZE]; 
+	chat_entry 	*whereList[TABLE_SIZE];
 	int 	whatC = 0;
 	int		whoC = 0;
 	int 	whereC = 0;
 
-	// ht_dump(knowledge_base);
+
 	// Loop through whole table
-    for(int i=0; i<1000; i++){
+    for(int i=0; i<TABLE_SIZE; i++){
 		
         chat_entry * entry;
 		
 		entry = malloc(sizeof(chat_entry));
 		
 		entry = knowledge_base -> chat_entries[i];
-		
-		
         if(entry != NULL){
 			if(strcmp(entry->intent, "WHAT") == 0 || strcmp(entry->intent, "What") == 0 || strcmp(entry->intent, "what") == 0){
 				whatList[whatC] = entry;
@@ -205,29 +195,6 @@ void knowledge_write(FILE *f) {
 			}
 		}
 	}
-
-	// printf("[WHAT]\n");
-	
-	// for(int i=0; i<whatC; i++){
-	//  	printf("%s=%s\n", whatList[i]->entity, whatList[i]->response);
-	// 	}
-		
-	// printf("\n- - - - - - - - - -\n[WHERE]\n");
-
-	// for(int i=0; i<whereC; i++){
-	//  	printf("%s=%s\n", whereList[i]->entity, whereList[i]->response);
-	//  	}
-	
-	// printf("\n- - - - - - - - - -\n[WHO]\n");
-	
-	// for(int i=0; i<whoC; i++){
-	// 	printf("%s=%s\n", whoList[i]->entity, whoList[i]->response);
-	// 	 }
-
-
-	/******************************************************************/
-
-
 	// Write to file
 	fprintf(f,"[what]\n");
 	
@@ -248,10 +215,6 @@ void knowledge_write(FILE *f) {
 		}
 
 	
-
-	
-
-	
 }
 /*
 * This function checks if the knowledge_base is NULL
@@ -270,3 +233,4 @@ void check_for_knowledge_base() {
 void knowledgedump(){
 	ht_dump(knowledge_base);
 }
+

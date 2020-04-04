@@ -1,0 +1,2 @@
+language = "c"
+run = "clang -pthread -lm -o main chatbot.c hashtable.c knowledge.c main.c"

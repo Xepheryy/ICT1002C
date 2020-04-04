@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include "chat1002.h"
 
-#define TABLE_SIZE 1000
 /*
 Function to create the hash table with the specified TABLE_SIZE.
 Returns a pointer to the hash_table created.
@@ -13,7 +12,6 @@ Returns a pointer to the hash_table created.
 hash_table *create_hash_table(){
 	//create pointer to table for reference
 	hash_table *hashtable = malloc(sizeof(hash_table) * 1);
-
 	//create null chat_entries in hash_table 
 	hashtable->chat_entries = malloc(sizeof(chat_entry) * TABLE_SIZE);
 	//hashtable->chat_entries = calloc(TABLE_SIZE,sizeof(chat_entry));
@@ -56,34 +54,19 @@ int insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry) {
 /*
 Useful debugging function to print everything stored in the specified hashtable.
 */
-// void ht_dump(hash_table *hashtable) {
-//     for (int i = 0; i < TABLE_SIZE; ++i) {
-//         chat_entry *entry = hashtable->chat_entries[i];
-
-//         if (entry == NULL) {
-//             continue;
-//         }
-
-
-//         for(;;) {
-//             printf("%s\t", entry->key);
+void ht_dump(hash_table *hashtable) {
+  for (int i = 0; i < TABLE_SIZE; ++i) {
+    chat_entry *entry = hashtable->chat_entries[i];
+		if (entry !=NULL) {
 			
-//             printf("%s\t", entry->intent);
+      printf("%s ", entry->intent);
 			
-//             printf("%s\t", entry->entity);
+      printf("%s\t", entry->entity);
 			
-//             printf("%s\n", entry->response);
-
-//             if (entry->next == NULL) {
-//                 break;
-//             }
-
-//             entry = entry->next;
-//         }
-
-//         printf("\n");
-//     }
-// }
+      printf("%s\n", entry->response);
+		}
+  }
+}
 
 /*
 helper function to clear hashtable.

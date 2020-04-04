@@ -77,7 +77,9 @@ typedef struct {
 } hash_table;
 
 /* New functions */
+#define TABLE_SIZE 1000
 char * trim();
+void check_for_knowledge_base();
 hash_table *create_hash_table();
 unsigned long hash(const char * str);
 int insert_into_hash_table(hash_table *hashTable, chat_entry *chatEntry);
