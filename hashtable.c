@@ -114,14 +114,13 @@ Returns a pointer to the created chat_entry.
 To be used in conjunction with insert_into_hash_table.
 */
 chat_entry *create_chat_entry(const char* intent,const char* entity, const char* response) {
-	chat_entry *chatEntry;
-	chatEntry = malloc(sizeof(chat_entry));
+	chat_entry *chatEntry = malloc(sizeof(chat_entry));
 	int sizeofKey = strlen(intent) + strlen(entity) + 1;
-	char *key2 = (char*) malloc (sizeofKey);
-	strcat(key2, intent);
-	strcat(key2, entity);
+	char *key = (char*) malloc (sizeofKey);
+	strcat(key, intent);
+	strcat(key, entity);
 	chatEntry->key = (char *) malloc(sizeofKey);
-	strcpy(chatEntry->key, key2);
+	strcpy(chatEntry->key, key);
 	
 	chatEntry->intent =  (char *) malloc (strlen(intent) +1);
 	strcpy(chatEntry->intent,intent);
@@ -132,7 +131,6 @@ chat_entry *create_chat_entry(const char* intent,const char* entity, const char*
 	chatEntry->response = (char *) malloc (strlen(response) +1);
 	strcpy(chatEntry->response, response);
 
-	chatEntry->next = NULL;
 	return chatEntry;
 
 }
